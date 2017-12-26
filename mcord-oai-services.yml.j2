@@ -161,7 +161,7 @@ topology_template:
 
 # OAI MME Vender
     oai_vmme:
-      type: tosca.node.VMMEVendor
+      type: tosca.nodes.VMMEVendor
       properties:
         name: oai_vmme
       requirements:
@@ -196,7 +196,7 @@ topology_template:
 
 # OAI HSS Vender
     oai_vhss:
-      type: tosca.node.VHSSVendor
+      type: tosca.nodes.VHSSVendor
       properties:
         name: oai_vhss
       requirements:
@@ -295,7 +295,7 @@ topology_template:
 
 # OAI Service instances
     serviceinstance#vMME_instance:
-      type: tosca.nodes.OAIServiceInstance
+      type: tosca.nodes.VMMETenant
       properties:
           name: oai_vmme1
       requirements:
@@ -307,7 +307,7 @@ topology_template:
             relationship: tosca.relationships.BelongsToOne
 
     serviceinstance#vHSS_instance:
-      type: tosca.nodes.OAIServiceInstance
+      type: tosca.nodes.VHSSTenant
       properties:
           name: oai_vhss1
       requirements:
@@ -319,7 +319,7 @@ topology_template:
             relationship: tosca.relationships.BelongsToOne
 
     serviceinstance#vSPGW_instance:
-      type: tosca.nodes.OAIServiceInstance
+      type: tosca.nodes.OAISPGWInstance
       properties:
           name: oai_spgw1
       requirements:
