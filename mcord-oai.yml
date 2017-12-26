@@ -257,5 +257,5 @@ xos_images:
     checksum: "sha256:ebf007ba3ec1043b7cd011fc6668e2a1d1d4c69c41071e8513ab355df7a057cb"
 
   - name: "image-oai"
-    url: "https://aweimeow.tw/oai_compress.qcow2"
+    url: "http://aweimeow.tw/oai_compress.qcow2"
     checksum: "sha256:00fff41a4160b8af2212bfd0703beda29ac73f402f7b1d9d586b81cdb44f369d"
