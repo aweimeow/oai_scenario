@@ -257,6 +257,6 @@ buildable_images:
 
   - name: xosproject/oaispgw-synchronizer
     repo: oaispgw
-    path: "xos/synchronzier"
+    path: "xos/synchronizer"
     dockerfile: "Dockerfile.synchronizer"
 
