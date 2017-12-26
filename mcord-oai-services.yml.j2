@@ -1,0 +1,297 @@
+{#
+  Copyright 2017-present Open Networking Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+#}
+
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: created by platform-install, need to add M-CORD services later
+
+imports:
+   - custom_types/xos.yaml
+   - custom_types/slice.yaml
+   - custom_types/site.yaml
+   - custom_types/image.yaml
+   - custom_types/flavor.yaml
+   - custom_types/network.yaml
+   - custom_types/onosservice.yaml
+   - custom_types/networkslice.yaml
+   - custom_types/vhssservice.yaml
+   - custom_types/vhssvendor.yaml
+   - custom_types/vhsstenant.yaml
+   - custom_types/vmmeservice.yaml
+   - custom_types/vmmevender.yaml
+   - custom_types/vmmetenant.yaml
+   - custom_types/oaispgw.yaml
+   - custom_types/oaispgwinstance.yaml
+
+topology_template:
+  node_templates:
+
+# site, image, fully created in deployment.yaml
+
+    {{ site_name }}:
+      type: tosca.nodes.Site
+      properties:
+        must-exist: true
+        name: {{ site_name }}
+
+# Define service instance flavor size
+
+    m1.small:
+      type: tosca.nodes.Flavor
+      properties:
+        name: m1.small
+        must-exist: true
+
+    m1.medium:
+      type: tosca.nodes.Flavor
+      properties:
+        name: m1.medium
+        must-exist: true
+
+    m1.large:
+      type: tosca.nodes.Flavor
+      properties:
+        name: m1.large
+        must-exist: true
+
+    m1.xlarge:
+      type: tosca.nodes.Flavor
+      properties:
+        name: m1.xlarge
+        must-exist: true
+
+ # Define image
+    trusty-server-multi-nic:
+      type: tosca.nodes.Image
+      properties:
+        name: trusty-server-multi-nic
+
+# management networks, fully created in management-net.yaml
+    management:
+      type: tosca.nodes.Network
+      properties:
+        must-exist: true
+        name: management
+
+# public network, fully created in public-net.yaml
+    public:
+      type: tosca.nodes.Network
+      properties:
+        must-exist: true
+        name: public
+
+{% if use_management_hosts %}
+    management_hosts:
+      type: tosca.nodes.Network
+      properties:
+        must-exist: true
+        name: management_hosts
+{% endif %}
+
+# OAI HSS Service, generated 1 service instance: vHSS
+    service#oaihss:
+      type: tosca.nodes.VHSSService
+      properties:
+        name: VHSSService
+        view_url: /admin/vhss/vhss/$id$/
+        kind: vhss
+        public_key: {{ lookup('file', config_cord_profile_dir + '/key_import/mcord_rsa.pub') }}
+        private_key_fn: /opt/xos/services/vhss/keys/mcord_rsa
+      artifacts:
+        pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
+
+# OAI HSS Service, generated 1 service instance: vMME
+    service#oaimme:
+      type: tosca.nodes.VMMEService
+      properties:
+        name: VMMEService
+        view_url: /admin/vmme/vmme/$id$/
+        kind: vmme
+        public_key: {{ lookup('file', config_cord_profile_dir + '/key_import/mcord_rsa.pub') }}
+        private_key_fn: /opt/xos/services/vhss/keys/mcord_rsa
+      artifacts:
+        pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
+
+# OAI SPGW Service, generated 1 service instance: vSPGW
+    service#oaispgw:
+      type: tosca.nodes.OAISPGW
+      properties:
+        name: OAISPGW
+        view_url: /admin/oaispgw/oaispgw/$id$/
+        kind: oaiservice
+        public_key: {{ lookup('file', config_cord_profile_dir + '/key_import/oaispgw_rsa.pub') }}
+        private_key_fn: /opt/xos/services/oaispgw/keys/oaispgw_rsa
+      artifacts:
+        pubkey: /opt/cord_profile/key_import/oaisgpw_rsa.pub
+
+# OAI MME Service slice, temporily use trusty as default image
+    {{ site_name }}_vmme:
+      description: vMME Service Slice
+      type: tosca.nodes.Slice
+      properties:
+          name: {{ site_name }}_vmme1
+          default_isolation: vm
+          network: noauto
+      requirements:
+          - site:
+              node: {{ site_name }}
+              relationship: tosca.relationships.BelongsToOne
+          - service:
+              node: service#oaimme
+              relationship: tosca.relationships.BelongsToOne
+          - default_image:
+              node: trusty-server-multi-nic
+              relationship: tosca.relationships.BelongsToOne
+          - default_flavor:
+              node: m1.medium
+              relationship: tosca.relationships.BelongsToOne
+
+# OAI HSS Service slice, temporily use trusty as default image
+    {{ site_name }}_vhss:
+      description: vHSS Service Slice
+      type: tosca.nodes.Slice
+      properties:
+          name: {{ site_name }}_vhss1
+          default_isolation: vm
+          network: noauto
+      requirements:
+          - site:
+              node: {{ site_name }}
+              relationship: tosca.relationships.BelongsToOne
+          - service:
+              node: service#oaihss
+              relationship: tosca.relationships.BelongsToOne
+          - default_image:
+              node: trusty-server-multi-nic
+              relationship: tosca.relationships.BelongsToOne
+          - default_flavor:
+              node: m1.medium
+              relationship: tosca.relationships.BelongsToOne
+
+# OAI SPGW Service slice, temporily use trusty as default image
+    {{ site_name }}_oaispgw:
+      description: OAI SPGW Service Slice
+      type: tosca.nodes.Slice
+      properties:
+          name: {{ site_name }}_oaispgw1
+          default_isolation: vm
+          network: noauto
+      requirements:
+          - site:
+              node: {{ site_name }}
+              relationship: tosca.relationships.BelongsToOne
+          - service:
+              node: service#oaispgw
+              relationship: tosca.relationships.BelongsToOne
+          - default_image:
+              node: trusty-server-multi-nic
+              relationship: tosca.relationships.BelongsToOne
+          - default_flavor:
+              node: m1.large
+              relationship: tosca.relationships.BelongsToOne
+
+# vMME private network Slice
+    vmme_network_slice:
+      type: tosca.nodes.NetworkSlice
+      requirements:
+        - network:
+            node: vmme_network
+            relationship: tosca.relationships.BelongsToOne
+        - slice:
+            node: {{ site_name }}_vmme
+            relationship: tosca.relationships.BelongsToOne
+
+# vHSS private network slice
+    vhss_network_slice:
+      type: tosca.nodes.NetworkSlice
+      requirements:
+        - network:
+            node: vhss_network
+            relationship: tosca.relationships.BelongsToOne
+        - slice:
+            node: {{ site_name }}_vhss
+            relationship: tosca.relationships.BelongsToOne
+
+# vSPGW private network slice
+    vspgw_network_slice:
+      type: tosca.nodes.NetworkSlice
+      requirements:
+        - network:
+            node: vspgw_network
+            relationship: tosca.relationships.BelongsToOne
+        - slice:
+            node: {{ site_name }}_oaispgw
+            relationship: tosca.relationships.BelongsToOne
+
+# Management network slice
+    vmme_management_network:
+      type: tosca.nodes.NetworkSlice
+      requirements:
+        - network:
+            node: management
+            relationship: tosca.relationships.BelongsToOne
+        - slice:
+            node: {{ site_name }}_vmme
+            relationship: tosca.relationships.BelongsToOne
+
+    vhss_management_network:
+      type: tosca.nodes.NetworkSlice
+      requirements:
+        - network:
+            node: management
+            relationship: tosca.relationships.BelongsToOne
+        - slice:
+            node: {{ site_name }}_vhss
+            relationship: tosca.relationships.BelongsToOne
+
+    vspgw_management_network:
+      type: tosca.nodes.NetworkSlice
+      requirements:
+        - network:
+            node: management
+            relationship: tosca.relationships.BelongsToOne
+        - slice:
+            node: {{ site_name }}_oaispgw
+            relationship: tosca.relationships.BelongsToOne
+
+# OAI Service instances
+    serviceinstance#vMME_instance:
+      type: tosca.nodes.OAIServiceInstance
+      properties:
+          name: oai_vmme1
+      requirements:
+        - owner:
+            node: service#oaimme
+            relationship: tosca.relationships.BelongsToOne
+
+    serviceinstance#vHSS_instance:
+      type: tosca.nodes.OAIServiceInstance
+      properties:
+          name: oai_vhss1
+      requirements:
+        - owner:
+            node: service#oaihss
+            relationship: tosca.relationships.BelongsToOne
+
+    serviceinstance#vSPGW_instance:
+      type: tosca.nodes.OAIServiceInstance
+      properties:
+          name: oai_spgw1
+      requirements:
+        - owner:
+            node: service#oaispgw
+            relationship: tosca.relationships.BelongsToOne
+
