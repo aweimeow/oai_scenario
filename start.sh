@@ -28,7 +28,8 @@ git clone https://github.com/aweimeow/oaispgw oaispgw
 # Checkout to target branch
 for var in "vmme" "vhss" "oaispgw"; do
     cd $var;
+    git remote add opencord https://github.com/aweimeow/$var.git;
     git checkout cord-4.1;
-    git pull;
+    git pull opencord cord-4.1;
     cd ..;
 done
