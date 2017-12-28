@@ -277,6 +277,9 @@ topology_template:
         - network:
             node: vspgw_network
             relationship: tosca.relationships.BelongsToOne
+        - public:
+            node: public
+            relationship: tosca.relationships.BelongsToOne
         - slice:
             node: {{ site_name }}_oaispgw
             relationship: tosca.relationships.BelongsToOne

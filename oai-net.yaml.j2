@@ -120,6 +120,14 @@ topology_template:
           translation: none
           vtn_kind: PRIVATE
 
+# Define Public Network Template
+    public_network_template:
+      type: tosca.nodes.NetworkTemplate
+      properties:
+          visibility: public
+          translation: none
+          vtn_kind: PUBLIC
+
 # vMME Private Network
     vmme_network:
       type: tosca.nodes.network.Network
@@ -128,7 +136,7 @@ topology_template:
           cidr: 10.0.6.0/24
       requirements:
           - network_template:
-              node: private_network_template
+              node: public_network_template
               relationship: tosca.relationships.UsesNetworkTemplate
           - owner:
               node: {{ site_name }}_epc_network
@@ -142,7 +150,7 @@ topology_template:
           cidr: 10.0.7.0/24
       requirements:
           - network_template:
-              node: private_network_template
+              node: public_network_template
               relationship: tosca.relationships.UsesNetworkTemplate
           - owner:
               node: {{ site_name }}_epc_network
@@ -156,7 +164,7 @@ topology_template:
           cidr: 10.0.8.0/24
       requirements:
           - network_template:
-              node: private_network_template
+              node: public_network_template
               relationship: tosca.relationships.UsesNetworkTemplate
           - owner:
               node: {{ site_name }}_epc_network
