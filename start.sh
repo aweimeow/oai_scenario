@@ -17,6 +17,7 @@ cp mcord-oai-virtual.yml $DST/podconfig/
 cp public-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
 cp oai-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
 cp mcord-oai-services.yml.j2 $DST/platform-install/roles/cord-profile/templates
+cp mcord-oai-service-graph.yml.j2 $DST/platform-install/roles/cord-profile/templates
 
 # Use custom version of vhss, vmme instead official
 cd ~/cord/orchestration/xos_services
