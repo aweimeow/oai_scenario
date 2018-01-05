@@ -44,6 +44,15 @@ topology_template:
         - addresses_public:
             node: addresses_public
             relationship: tosca.relationships.ProvidesAddresses
+        - addresses_vmme:
+            node: addresses_vmme
+            relationship: tosca.relationships.ProvidesAddresses
+        - addresses_vhss:
+            node: addresses_vhss
+            relationship: tosca.relationships.ProvidesAddresses
+        - addresses_vspgw:
+            node: addresses_vspgw
+            relationship: tosca.relationships.ProvidesAddresses
 
     service#vrouter:
       type: tosca.nodes.VRouterService
@@ -57,6 +66,27 @@ topology_template:
         addresses: 10.8.1.0/24
         gateway_ip: 10.8.1.1
         gateway_mac: a4:23:05:06:01:01
+
+    addresses_vmme:
+      type: tosca.nodes.AddressPool
+      properties:
+        addresses: 10.0.6.0/24
+        gateway_ip: 10.0.6.1
+        gateway_mac: aa:bb:cc:dd:ee:01
+
+    addresses_vhss:
+      type: tosca.nodes.AddressPool
+      properties:
+        addresses: 10.0.7.0/24
+        gateway_ip: 10.0.7.1
+        gateway_mac: aa:bb:cc:dd:ee:02
+
+    addresses_vspgw:
+      type: tosca.nodes.AddressPool
+      properties:
+        addresses: 10.0.8.0/24
+        gateway_ip: 10.0.8.1
+        gateway_mac: aa:bb:cc:dd:ee:03
 
     vRouter_ONOS_app:
       type: tosca.nodes.ONOSvRouterApp
