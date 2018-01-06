@@ -64,8 +64,8 @@ topology_template:
         connect_method: None
       requirements:
         - subscriber_service:
-          node: service#oaimme
-          relationship: tosca.relationships.BelongsToOne
+            node: service#oaimme
+            relationship: tosca.relationships.BelongsToOne
         - provider_service:
-          node: service#oaispgw
-          relationship: tosca.relationships.BelongsToOne
+            node: service#oaispgw
+            relationship: tosca.relationships.BelongsToOne
