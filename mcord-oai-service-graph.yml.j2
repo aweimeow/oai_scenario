@@ -27,19 +27,19 @@ topology_template:
   node_templates:
 
     # Service VHSS
-    service#oaihss
+    service#oaihss:
       type: tosca.nodes.VHSSService
       properties:
         name: VHSSService
 
     # Service VMME
-    service#oaimme
+    service#oaimme:
       type: tosca.nodes.VMMEService
       properties:
         name: VMMEService
 
     # Service VSPGW
-    service#oaispgw
+    service#oaispgw:
       type: tosca.nodes.OAISPGW
       properties:
         name: OAISPGW
