@@ -35,6 +35,7 @@ imports:
    - custom_types/vmmetenant.yaml
    - custom_types/oaispgw.yaml
    - custom_types/oaispgwinstance.yaml
+   - custom_types/vepcservice.yaml
 
 topology_template:
   node_templates:
@@ -120,6 +121,16 @@ topology_template:
         name: management_hosts
 {% endif %}
 
+# VEPC Service, generated 1 service instance: vEPC
+    service#vepc:
+      type: tosca.nodes.VEPCService
+      properties:
+        name: VEPCService
+        public_key: {{ lookup('file', config_cord_profile_dir + '/key_import/mcord_rsa.pub') }}
+        private_key_fn: /opt/xos/services/vhss/keys/mcord_rsa
+      artifacts:
+        pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
+
 # OAI HSS Service, generated 1 service instance: vHSS
     service#oaihss:
       type: tosca.nodes.VHSSService
@@ -132,7 +143,7 @@ topology_template:
       artifacts:
         pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
 
-# OAI HSS Service, generated 1 service instance: vMME
+# OAI MME Service, generated 1 service instance: vMME
     service#oaimme:
       type: tosca.nodes.VMMEService
       properties:

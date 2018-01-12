@@ -21,15 +21,16 @@ cp mcord-oai-service-graph.yml.j2 $DST/platform-install/roles/cord-profile/templ
 
 # Use custom version of vhss, vmme instead official
 cd ~/cord/orchestration/xos_services
-rm -rf vhss vmme
-git clone https://github.com/aweimeow/vMME vmme
-git clone https://github.com/aweimeow/vHSS vhss
-git clone https://github.com/aweimeow/oaispgw oaispgw
+rm -rf vhss vmme epc-service
+git clone https://github.com/jiahchen/vMME vmme
+git clone https://github.com/jiahchen/vHSS vhss
+git clone https://github.com/jiahchen/oaispgw oaispgw
+git clone https://github.com/jiahchen/epc-service epc-service
 
 # Checkout to target branch
-for var in "vmme" "vhss" "oaispgw"; do
+for var in "vmme" "vhss" "oaispgw" "epc-service"; do
     cd $var;
-    git remote add opencord https://github.com/aweimeow/$var.git;
+    git remote add opencord https://github.com/jiahchen/$var.git;
     git checkout cord-4.1;
     git pull opencord cord-4.1;
     cd ..;
