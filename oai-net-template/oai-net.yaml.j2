@@ -41,8 +41,8 @@ topology_template:
     service#addressmanager:
       type: tosca.nodes.AddressManagerService
       requirements:
-        - addresses_sgi:
-            node: addresses_sgi
+        - addresses_sgi_network:
+            node: addresses_sgi_network
             relationship: tosca.relationships.ProvidesAddresses
 
     service#vrouter:
