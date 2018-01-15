@@ -87,32 +87,6 @@ topology_template:
         must-exist: true
         name: management
 
-# public network, fully created in public-net.yaml
-    public:
-      type: tosca.nodes.Network
-      properties:
-        must-exist: true
-        name: public
-
-# mme, hss, spgw network, fully created in oai-net.yaml
-    vmme_network:
-      type: tosca.nodes.Network
-      properties:
-        must-exist: true
-        name: vmme_network
-
-    vhss_network:
-      type: tosca.nodes.Network
-      properties:
-        must-exist: true
-        name: vhss_network
-
-    vspgw_network:
-      type: tosca.nodes.Network
-      properties:
-        must-exist: true
-        name: vspgw_network
-
 {% if use_management_hosts %}
     management_hosts:
       type: tosca.nodes.Network
@@ -120,6 +94,51 @@ topology_template:
         must-exist: true
         name: management_hosts
 {% endif %}
+
+# sgi network, fully created in sgi-net.yaml
+    sgi_network:
+      type: tosca.nodes.Network
+      properties:
+        must-exist: true
+        name: sgi_network
+# s1u_network is for connectivity between VMs, fully created in oai-s1u-net.yaml
+    s1u_network:
+      type: tosca.nodes.Network
+      properties:
+        must-exist: true
+        name: s1u_network
+# s1mme_network is for connectivity between VMs, fully created in oai-s1mme-net.yaml
+    s1mme_network:
+      type: tosca.nodes.Network
+      properties:
+        must-exist: true
+        name: s1mme_network
+# s6a_network is for connectivity between VMs, fully created in s6a-net.yaml
+    s6a_network:
+      type: tosca.nodes.Network
+      properties:
+        must-exist: true
+        name: s6a_network
+# s11_network is for connectivity between VMs, fully created in s11-net.yaml
+    s11_network:
+      type: tosca.nodes.Network
+      properties:
+        must-exist: true
+        name: s11_network
+
+# ONOS_CORD, fully created in vtn.yaml
+    service#ONOS_CORD:
+      type: tosca.nodes.ONOSService
+      properties:
+        must-exist: true
+        name: ONOS_CORD
+
+# ONOS_Fabric, fully created in fabric.yaml
+    service#ONOS_Fabric:
+      type: tosca.nodes.ONOSService
+      properties:
+        must-exist: true
+        name: ONOS_Fabric
 
 # VEPC Service, generated 1 service instance: vEPC
     service#vepc:
@@ -172,7 +191,7 @@ topology_template:
       description: vMME Service Slice
       type: tosca.nodes.Slice
       properties:
-          name: {{ site_name }}_vmme1
+          name: {{ site_name }}_vmme
           default_isolation: vm
           network: noauto
       requirements:
@@ -189,25 +208,12 @@ topology_template:
               node: m1.medium
               relationship: tosca.relationships.BelongsToOne
 
-# OAI MME Vender
-    oai_vmme:
-      type: tosca.nodes.VMMEVendor
-      properties:
-        name: oai_vmme
-      requirements:
-        - image:
-            node: trusty-server-multi-nic
-            relationship: tosca.relationships.BelongsToOne
-        - flavor:
-            node: m1.medium
-            relationship: tosca.relationships.BelongsToOne
-
 # OAI HSS Service slice, temporily use trusty as default image
     {{ site_name }}_vhss:
       description: vHSS Service Slice
       type: tosca.nodes.Slice
       properties:
-          name: {{ site_name }}_vhss1
+          name: {{ site_name }}_vhss
           default_isolation: vm
           network: noauto
       requirements:
@@ -224,25 +230,12 @@ topology_template:
               node: m1.medium
               relationship: tosca.relationships.BelongsToOne
 
-# OAI HSS Vender
-    oai_vhss:
-      type: tosca.nodes.VHSSVendor
-      properties:
-        name: oai_vhss
-      requirements:
-        - image:
-            node: trusty-server-multi-nic
-            relationship: tosca.relationships.BelongsToOne
-        - flavor:
-            node: m1.small
-            relationship: tosca.relationships.BelongsToOne
-
 # OAI SPGW Service slice, temporily use trusty as default image
     {{ site_name }}_oaispgw:
       description: OAI SPGW Service Slice
       type: tosca.nodes.Slice
       properties:
-          name: {{ site_name }}_oaispgw1
+          name: {{ site_name }}_oaispgw
           default_isolation: vm
           network: noauto
       requirements:
@@ -259,111 +252,28 @@ topology_template:
               node: m1.large
               relationship: tosca.relationships.BelongsToOne
 
-# vMME private network Slice
-    vmme_network_slice:
-      type: tosca.nodes.NetworkSlice
-      requirements:
-        - network:
-            node: vmme_network
-            relationship: tosca.relationships.BelongsToOne
-        - slice:
-            node: {{ site_name }}_vmme
-            relationship: tosca.relationships.BelongsToOne
-
-# vHSS private network slice
-    vhss_network_slice:
-      type: tosca.nodes.NetworkSlice
-      requirements:
-        - network:
-            node: vhss_network
-            relationship: tosca.relationships.BelongsToOne
-        - slice:
-            node: {{ site_name }}_vhss
-            relationship: tosca.relationships.BelongsToOne
-
-# vSPGW private network slice
-    vspgw_network_slice:
-      type: tosca.nodes.NetworkSlice
-      requirements:
-        - network:
-            node: vspgw_network
-            relationship: tosca.relationships.BelongsToOne
-        - slice:
-            node: {{ site_name }}_oaispgw
-            relationship: tosca.relationships.BelongsToOne
-
-# Management network slice
-    vmme_management_network:
-      type: tosca.nodes.NetworkSlice
-      requirements:
-        - network:
-            node: management
-            relationship: tosca.relationships.BelongsToOne
-        - slice:
-            node: {{ site_name }}_vmme
-            relationship: tosca.relationships.BelongsToOne
-
-    vhss_management_network:
-      type: tosca.nodes.NetworkSlice
-      requirements:
-        - network:
-            node: management
-            relationship: tosca.relationships.BelongsToOne
-        - slice:
-            node: {{ site_name }}_vhss
-            relationship: tosca.relationships.BelongsToOne
-
-    vspgw_management_network:
-      type: tosca.nodes.NetworkSlice
-      requirements:
-        - network:
-            node: management
-            relationship: tosca.relationships.BelongsToOne
-        - slice:
-            node: {{ site_name }}_oaispgw
-            relationship: tosca.relationships.BelongsToOne
-
-    vspgw_public_network:
-      type: tosca.nodes.NetworkSlice
-      requirements:
-        - network:
-            node: public
-            relationship: tosca.relationships.BelongsToOne
-        - slice:
-            node: {{ site_name }}_oaispgw
-            relationship: tosca.relationships.BelongsToOne
-
-# OAI Service instances
-    serviceinstance#vMME_instance:
-      type: tosca.nodes.VMMETenant
+# OAI MME Vender
+    oai_vmme:
+      type: tosca.nodes.VMMEVendor
       properties:
-        name: vmme1
+        name: oai_vmme
       requirements:
-        - vmme_vendor:
-            node: oai_vmme
+        - image:
+            node: trusty-server-multi-nic
             relationship: tosca.relationships.BelongsToOne
-        - owner:
-            node: service#oaimme
+        - flavor:
+            node: m1.medium
             relationship: tosca.relationships.BelongsToOne
 
-    serviceinstance#vHSS_instance:
-      type: tosca.nodes.VHSSTenant
+# OAI HSS Vender
+    oai_vhss:
+      type: tosca.nodes.VHSSVendor
       properties:
-        name: vhss1
+        name: oai_vhss
       requirements:
-        - vhss_vendor:
-            node: oai_vhss
+        - image:
+            node: trusty-server-multi-nic
             relationship: tosca.relationships.BelongsToOne
-        - owner:
-            node: service#oaihss
+        - flavor:
+            node: m1.small
             relationship: tosca.relationships.BelongsToOne
-
-    serviceinstance#vSPGW_instance:
-      type: tosca.nodes.OAISPGWInstance
-      properties:
-        name: vspgw1
-      requirements:
-        - owner:
-            node: service#oaispgw
-            relationship: tosca.relationships.BelongsToOne
-
