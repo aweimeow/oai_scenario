@@ -126,20 +126,6 @@ topology_template:
         must-exist: true
         name: s11_network
 
-# ONOS_CORD, fully created in vtn.yaml
-    service#ONOS_CORD:
-      type: tosca.nodes.ONOSService
-      properties:
-        must-exist: true
-        name: ONOS_CORD
-
-# ONOS_Fabric, fully created in fabric.yaml
-    service#ONOS_Fabric:
-      type: tosca.nodes.ONOSService
-      properties:
-        must-exist: true
-        name: ONOS_Fabric
-
 # VEPC Service, generated 1 service instance: vEPC
     service#vepc:
       type: tosca.nodes.VEPCService
