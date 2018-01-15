@@ -16,7 +16,7 @@ cp mcord-oai.yml $DST/platform-install/profile_manifests/
 cp mcord-oai-virtual.yml $DST/podconfig/
 cp mcord-oai-services.yml.j2 $DST/platform-install/roles/cord-profile/templates
 cp mcord-oai-service-graph.yml.j2 $DST/platform-install/roles/cord-profile/templates
-cp ./oai-net-template/public-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
+cp ./oai-net-template/sgi-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
 cp ./oai-net-template/oai-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
 cp ./oai-net-template/oai-s1mme-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
 cp ./oai-net-template/oai-s1u-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
