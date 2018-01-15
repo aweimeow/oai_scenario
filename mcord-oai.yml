@@ -34,7 +34,7 @@ xos_tosca_config_templates:
   - fabric-service.yaml
   - oai-net.yaml
   - management-net.yaml
-  - public-net.yaml
+  - sgi-net.yaml
   - vrouter.yaml
   - xos-gui-extensions.yml
 
@@ -43,6 +43,10 @@ xos_new_tosca_config_templates:
   - mcord-oai-services.yml
   - mcord-oai-service-graph.yml
   - service-graph-constraints.yaml
+  - oai-s1mme-net.yaml
+  - oai-s1u-net.yaml
+  - s6a-net.yaml
+  - s11-net.yaml
 
 xos_other_templates:
   - fabric-network-cfg.json

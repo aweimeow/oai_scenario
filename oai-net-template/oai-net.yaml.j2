@@ -41,17 +41,8 @@ topology_template:
     service#addressmanager:
       type: tosca.nodes.AddressManagerService
       requirements:
-        - addresses_public:
-            node: addresses_public
-            relationship: tosca.relationships.ProvidesAddresses
-        - addresses_vmme:
-            node: addresses_vmme
-            relationship: tosca.relationships.ProvidesAddresses
-        - addresses_vhss:
-            node: addresses_vhss
-            relationship: tosca.relationships.ProvidesAddresses
-        - addresses_vspgw:
-            node: addresses_vspgw
+        - addresses_sgi:
+            node: addresses_sgi
             relationship: tosca.relationships.ProvidesAddresses
 
     service#vrouter:
@@ -60,33 +51,12 @@ topology_template:
         view_url: /admin/vrouter/vrouterservice/$id$/
         replaces: service_vrouter
 
-    addresses_public:
+    addresses_sgi:
       type: tosca.nodes.AddressPool
       properties:
         addresses: 10.8.1.0/24
         gateway_ip: 10.8.1.1
         gateway_mac: a4:23:05:06:01:01
-
-    addresses_vmme:
-      type: tosca.nodes.AddressPool
-      properties:
-        addresses: 10.0.6.0/24
-        gateway_ip: 10.0.6.1
-        gateway_mac: aa:bb:cc:dd:ee:01
-
-    addresses_vhss:
-      type: tosca.nodes.AddressPool
-      properties:
-        addresses: 10.0.7.0/24
-        gateway_ip: 10.0.7.1
-        gateway_mac: aa:bb:cc:dd:ee:02
-
-    addresses_vspgw:
-      type: tosca.nodes.AddressPool
-      properties:
-        addresses: 10.0.8.0/24
-        gateway_ip: 10.0.8.1
-        gateway_mac: aa:bb:cc:dd:ee:03
 
     vRouter_ONOS_app:
       type: tosca.nodes.ONOSvRouterApp
@@ -157,46 +127,4 @@ topology_template:
           visibility: public
           translation: none
           vtn_kind: PUBLIC
-
-# vMME Private Network
-    vmme_network:
-      type: tosca.nodes.network.Network
-      properties:
-          ip_version: 4
-          cidr: 10.0.6.0/24
-      requirements:
-          - network_template:
-              node: public_network_template
-              relationship: tosca.relationships.UsesNetworkTemplate
-          - owner:
-              node: {{ site_name }}_epc_network
-              relationship: tosca.relationships.MemberOfSlice
-
-# vHSS Private Network
-    vhss_network:
-      type: tosca.nodes.network.Network
-      properties:
-          ip_version: 4
-          cidr: 10.0.7.0/24
-      requirements:
-          - network_template:
-              node: public_network_template
-              relationship: tosca.relationships.UsesNetworkTemplate
-          - owner:
-              node: {{ site_name }}_epc_network
-              relationship: tosca.relationships.MemberOfSlice
-
-# vSPGW Private Network
-    vspgw_network:
-      type: tosca.nodes.network.Network
-      properties:
-          ip_version: 4
-          cidr: 10.0.8.0/24
-      requirements:
-          - network_template:
-              node: public_network_template
-              relationship: tosca.relationships.UsesNetworkTemplate
-          - owner:
-              node: {{ site_name }}_epc_network
-              relationship: tosca.relationships.MemberOfSlice
 
