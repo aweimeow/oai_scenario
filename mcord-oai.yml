@@ -42,6 +42,7 @@ xos_tosca_config_templates:
 xos_new_tosca_config_templates:
   - mcord-oai-services.yml
   - mcord-oai-service-graph.yml
+  - service-graph-constraints.yaml
 
 xos_other_templates:
   - fabric-network-cfg.json
@@ -80,6 +81,8 @@ xos_services:
   - name: vepc
     path: orchestration/xos_services/epc-service
     keypair: mcord_rsa
+
+xos_gui_service_graph_constraints: '["mcord", ["vhss", "vmme", "oaispgw"]]'
 
 profile_library: "mcord"
 

@@ -23,6 +23,7 @@ imports:
    - custom_types/oaispgw.yaml
    - custom_types/vepcservice.yaml
    - custom_types/servicedependency.yaml
+   - custom_types/mcordsubscriberservice.yaml
 
 topology_template:
   node_templates:
@@ -69,4 +70,36 @@ topology_template:
             relationship: tosca.relationships.BelongsToOne
         - provider_service:
             node: service#oaispgw
+            relationship: tosca.relationships.BelongsToOne
+
+# M-CORD Subscriber
+    service#mcord:
+      type: tosca.nodes.MCordSubscriberService
+      properties:
+        name: mcord
+
+    # ServiceDependency M-CORD to OAI vMME
+    mcord_vmme:
+      type: tosca.nodes.ServiceDependency
+      properties:
+        connect_method: None
+      requirements:
+        - subscriber_service:
+            node: service#oaimme
+            relationship: tosca.relationships.BelongsToOne
+        - provider_service:
+            node: service#mcord
+            relationship: tosca.relationships.BelongsToOne
+
+    # ServiceDependency M-CORD to OAI VSPGW
+    mcord_oaispgw:
+      type: tosca.nodes.ServiceDependency
+      properties:
+        connect_method: None
+      requirements:
+        - subscriber_service:
+            node: service#oaispgw
+            relationship: tosca.relationships.BelongsToOne
+        - provider_service:
+            node: service#mcord
             relationship: tosca.relationships.BelongsToOne
