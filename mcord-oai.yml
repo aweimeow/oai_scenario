@@ -32,21 +32,21 @@ use_maas: True
 xos_tosca_config_templates:
   - vtn-service.yaml
   - fabric-service.yaml
+  - vrouter.yaml
+  - xos-gui-extensions.yml
   - oai-net.yaml
   - management-net.yaml
   - sgi-net.yaml
-  - vrouter.yaml
-  - xos-gui-extensions.yml
 
 # XOS new version's TOSCA config
 xos_new_tosca_config_templates:
-  - mcord-oai-services.yml
-  - mcord-oai-service-graph.yml
-  - service-graph-constraints.yaml
   - oai-s1mme-net.yaml
   - oai-s1u-net.yaml
   - s6a-net.yaml
   - s11-net.yaml
+  - mcord-oai-services.yml
+  - mcord-oai-service-graph.yml
+  - service-graph-constraints.yaml
 
 xos_other_templates:
   - fabric-network-cfg.json
