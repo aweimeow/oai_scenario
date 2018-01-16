@@ -193,10 +193,10 @@ topology_template:
               node: service#oaimme
               relationship: tosca.relationships.BelongsToOne
           - default_image:
-              node: trusty-server-multi-nic
+              node: image-oai
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
-              node: m1.medium
+              node: m1.large
               relationship: tosca.relationships.BelongsToOne
 
 # OAI HSS Service slice, temporily use trusty as default image
@@ -215,10 +215,10 @@ topology_template:
               node: service#oaihss
               relationship: tosca.relationships.BelongsToOne
           - default_image:
-              node: trusty-server-multi-nic
+              node: image-oai
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
-              node: m1.medium
+              node: m1.large
               relationship: tosca.relationships.BelongsToOne
 
 # OAI SPGW Service slice, temporily use trusty as default image
@@ -237,7 +237,7 @@ topology_template:
               node: service#oaispgw
               relationship: tosca.relationships.BelongsToOne
           - default_image:
-              node: trusty-server-multi-nic
+              node: image-oai
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
               node: m1.large
@@ -250,10 +250,10 @@ topology_template:
         name: oai_vmme
       requirements:
         - image:
-            node: trusty-server-multi-nic
+            node: image-oai
             relationship: tosca.relationships.BelongsToOne
         - flavor:
-            node: m1.medium
+            node: m1.large
             relationship: tosca.relationships.BelongsToOne
 
 # OAI HSS Vender
@@ -263,8 +263,8 @@ topology_template:
         name: oai_vhss
       requirements:
         - image:
-            node: trusty-server-multi-nic
+            node: image-oai
             relationship: tosca.relationships.BelongsToOne
         - flavor:
-            node: m1.small
+            node: m1.large
             relationship: tosca.relationships.BelongsToOne
