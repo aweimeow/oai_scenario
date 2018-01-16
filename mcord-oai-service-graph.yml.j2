@@ -20,7 +20,7 @@ description: Persist M-CORD Subscriber
 imports:
    - custom_types/vhssservice.yaml
    - custom_types/vmmeservice.yaml
-   - custom_types/oaispgw.yaml
+   - custom_types/oaispgwservice.yaml
    - custom_types/vepcservice.yaml
    - custom_types/servicedependency.yaml
    - custom_types/mcordsubscriberservice.yaml
@@ -42,9 +42,9 @@ topology_template:
 
     # Service VSPGW
     service#oaispgw:
-      type: tosca.nodes.OAISPGW
+      type: tosca.nodes.OAISPGWService
       properties:
-        name: OAISPGW
+        name: OAISPGWService
 
     # Service dependency from VMME to VHSS
     mcord_vmme_hss:
