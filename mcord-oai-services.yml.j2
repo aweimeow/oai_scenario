@@ -80,6 +80,11 @@ topology_template:
       properties:
         name: trusty-server-multi-nic
 
+    image-oai:
+      type: tosca.nodes.Image
+      properties:
+        name: image-oai
+
 # management networks, fully created in management-net.yaml
     management:
       type: tosca.nodes.Network
