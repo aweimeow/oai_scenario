@@ -161,7 +161,7 @@ topology_template:
         view_url: /admin/vmme/vmme/$id$/
         kind: vmme
         public_key: {{ lookup('file', config_cord_profile_dir + '/key_import/mcord_rsa.pub') }}
-        private_key_fn: /opt/xos/services/vhss/keys/mcord_rsa
+        private_key_fn: /opt/xos/services/vmme/keys/mcord_rsa
       artifacts:
         pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
 
