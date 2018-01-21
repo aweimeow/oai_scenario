@@ -42,6 +42,7 @@ xos_tosca_config_templates:
 xos_new_tosca_config_templates:
   - mcord-oai-services.yml
   - mcord-oai-service-graph.yml
+  - service-graph-constraints.yaml
 
 xos_other_templates:
   - fabric-network-cfg.json
