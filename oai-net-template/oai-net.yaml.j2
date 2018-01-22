@@ -38,12 +38,12 @@ topology_template:
         no-create: true
         no-update: true
 
-    service#addressmanager:
-      type: tosca.nodes.AddressManagerService
-      requirements:
-        - addresses_sgi_network:
-            node: addresses_sgi_network
-            relationship: tosca.relationships.ProvidesAddresses
+#    service#addressmanager:
+#      type: tosca.nodes.AddressManagerService
+#      requirements:
+#        - addresses_sgi_network:
+#            node: addresses_sgi_network
+#            relationship: tosca.relationships.ProvidesAddresses
 
     service#vrouter:
       type: tosca.nodes.VRouterService
@@ -51,12 +51,12 @@ topology_template:
         view_url: /admin/vrouter/vrouterservice/$id$/
         replaces: service_vrouter
 
-    addresses_sgi_network:
-      type: tosca.nodes.AddressPool
-      properties:
-        addresses: 10.8.1.0/24
-        gateway_ip: 10.8.1.1
-        gateway_mac: a4:23:05:06:01:01
+ #   addresses_sgi_network:
+ #     type: tosca.nodes.AddressPool
+ #     properties:
+ #       addresses: 10.8.1.0/24
+ #       gateway_ip: 10.8.1.1
+ #       gateway_mac: a4:23:05:06:01:01
 
     vRouter_ONOS_app:
       type: tosca.nodes.ONOSvRouterApp
