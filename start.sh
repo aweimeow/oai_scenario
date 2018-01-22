@@ -20,6 +20,7 @@ cp ./oai-net-template/sgi-net.yaml.j2 $DST/platform-install/roles/cord-profile/t
 cp ./oai-net-template/oai-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
 cp ./oai-net-template/oai-s1mme-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
 cp ./oai-net-template/oai-s1u-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
+cp ./oai-net-template/oai-sgi-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
 cp ./oai-net-template/s6a-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
 cp ./oai-net-template/s11-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
 

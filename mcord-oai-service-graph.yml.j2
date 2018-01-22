@@ -90,16 +90,3 @@ topology_template:
         - provider_service:
             node: service#mcord
             relationship: tosca.relationships.BelongsToOne
-
-    # ServiceDependency M-CORD to OAI VSPGW
-    mcord_oaispgw:
-      type: tosca.nodes.ServiceDependency
-      properties:
-        connect_method: None
-      requirements:
-        - subscriber_service:
-            node: service#oaispgw
-            relationship: tosca.relationships.BelongsToOne
-        - provider_service:
-            node: service#mcord
-            relationship: tosca.relationships.BelongsToOne
