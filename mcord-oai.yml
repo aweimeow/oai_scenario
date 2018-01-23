@@ -40,9 +40,9 @@ xos_tosca_config_templates:
 
 # XOS new version's TOSCA config
 xos_new_tosca_config_templates:
+  - oai-sgi-net.yaml
   - oai-s1mme-net.yaml
   - oai-s1u-net.yaml
-  - oai-sgi-net.yaml
   - s6a-net.yaml
   - s11-net.yaml
   - mcord-oai-services.yml

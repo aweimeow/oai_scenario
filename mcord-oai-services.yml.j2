@@ -100,6 +100,12 @@ topology_template:
         name: management_hosts
 {% endif %}
 
+# flat_sgi_network is for connectivity between VMs, fully created in oai-s1u-net.yaml
+    s1u_network:
+      type: tosca.nodes.Network
+      properties:
+        must-exist: true
+        name: flat_sgi_network
 # sgi network, fully created in sgi-net.yaml
     sgi_network:
       type: tosca.nodes.Network
@@ -112,12 +118,6 @@ topology_template:
       properties:
         must-exist: true
         name: s1u_network
-# flat_sgi_network is for connectivity between VMs, fully created in oai-s1u-net.yaml
-    s1u_network:
-      type: tosca.nodes.Network
-      properties:
-        must-exist: true
-        name: flat_sgi_network
 # s1mme_network is for connectivity between VMs, fully created in oai-s1mme-net.yaml
     s1mme_network:
       type: tosca.nodes.Network
