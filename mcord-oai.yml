@@ -268,6 +268,6 @@ xos_images:
     url: "https://github.com/opencord/platform-install/releases/download/vms/trusty-server-cloudimg-amd64-disk1.img.20170201"
     checksum: "sha256:ebf007ba3ec1043b7cd011fc6668e2a1d1d4c69c41071e8513ab355df7a057cb"
 
-  - name: "image-oai"
-    url: "http://aweimeow.tw/oai_compress.qcow2"
-    checksum: "sha256:00fff41a4160b8af2212bfd0703beda29ac73f402f7b1d9d586b81cdb44f369d"
+  - name: "image-oaiepc"
+    url: "https://aweimeow.tw/oai-latest-compress.qcow2"
+    checksum: "sha256:ec51c2014418561db9143e84b03b9746840f867a2a2d2d3c8d806e566395239c"

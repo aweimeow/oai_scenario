@@ -80,10 +80,10 @@ topology_template:
       properties:
         name: trusty-server-multi-nic
 
-    image-oai:
+    image-oaiepc:
       type: tosca.nodes.Image
       properties:
-        name: image-oai
+        name: image-oaiepc
 
 # management networks, fully created in management-net.yaml
     management:
@@ -199,7 +199,7 @@ topology_template:
               node: service#oaimme
               relationship: tosca.relationships.BelongsToOne
           - default_image:
-              node: image-oai
+              node: image-oaiepc
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
               node: m1.large
@@ -221,7 +221,7 @@ topology_template:
               node: service#oaihss
               relationship: tosca.relationships.BelongsToOne
           - default_image:
-              node: image-oai
+              node: image-oaiepc
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
               node: m1.large
@@ -243,7 +243,7 @@ topology_template:
               node: service#oaispgw
               relationship: tosca.relationships.BelongsToOne
           - default_image:
-              node: image-oai
+              node: image-oaiepc
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
               node: m1.large
@@ -256,7 +256,7 @@ topology_template:
         name: oai_vmme
       requirements:
         - image:
-            node: image-oai
+            node: image-oaiepc
             relationship: tosca.relationships.BelongsToOne
         - flavor:
             node: m1.large
@@ -269,7 +269,7 @@ topology_template:
         name: oai_vhss
       requirements:
         - image:
-            node: image-oai
+            node: image-oaiepc
             relationship: tosca.relationships.BelongsToOne
         - flavor:
             node: m1.large
