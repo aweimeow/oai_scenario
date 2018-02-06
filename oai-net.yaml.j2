@@ -30,6 +30,27 @@ topology_template:
     {{ site_name }}:
       type: tosca.nodes.Site
 
+# Service Slice, fully created in mcord-oai-services.yml
+
+    {{ site_name }}_vhss:
+      type: tosca.nodes.Slice
+      properties:
+        must-exist: true
+        name: {{ site_name }}_vhss1
+
+    {{ site_name }}_vmme:
+      type: tosca.nodes.Slice
+      properties:
+        must-exist: true
+        name: {{ site_name }}_vmme1
+
+    {{ site_name }}_oaispgw:
+      type: tosca.nodes.Slice
+      properties:
+        must-exist: true
+        name: {{ site_name }}_oaispgw1
+
+
 # ONOS_Fabric, fully created in fabric.yaml
     service#ONOS_Fabric:
       type: tosca.nodes.ONOSService
@@ -131,17 +152,6 @@ topology_template:
             node: in#wanside
             relationship: tosca.relationships.IsType
 
-# EPC Network slice for owning Network
-    {{ site_name }}_epc_network:
-      description: This slice exists solely to own the private network
-      type: tosca.nodes.Slice
-      properties:
-          network: noauto
-      requirements:
-          - site:
-              node: {{ site_name }}
-              relationship: tosca.relationships.MemberOfSite
-
 # Define Private Network Template
     private_network_template:
       type: tosca.nodes.NetworkTemplate
@@ -166,10 +176,10 @@ topology_template:
           cidr: 10.0.6.0/24
       requirements:
           - network_template:
-              node: public_network_template
+              node: private_network_template
               relationship: tosca.relationships.UsesNetworkTemplate
           - owner:
-              node: {{ site_name }}_epc_network
+              node: {{ site_name }}_vmme
               relationship: tosca.relationships.MemberOfSlice
 
 # vHSS Private Network
@@ -180,10 +190,10 @@ topology_template:
           cidr: 10.0.7.0/24
       requirements:
           - network_template:
-              node: public_network_template
+              node: private_network_template
               relationship: tosca.relationships.UsesNetworkTemplate
           - owner:
-              node: {{ site_name }}_epc_network
+              node: {{ site_name }}_vhss
               relationship: tosca.relationships.MemberOfSlice
 
 # vSPGW Private Network
@@ -194,9 +204,9 @@ topology_template:
           cidr: 10.0.8.0/24
       requirements:
           - network_template:
-              node: public_network_template
+              node: private_network_template
               relationship: tosca.relationships.UsesNetworkTemplate
           - owner:
-              node: {{ site_name }}_epc_network
+              node: {{ site_name }}_oaispgw
               relationship: tosca.relationships.MemberOfSlice
 
