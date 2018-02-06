@@ -30,27 +30,6 @@ topology_template:
     {{ site_name }}:
       type: tosca.nodes.Site
 
-# Service Slice, fully created in mcord-oai-services.yml
-
-    {{ site_name }}_vhss:
-      type: tosca.nodes.Slice
-      properties:
-        must-exist: true
-        name: {{ site_name }}_vhss1
-
-    {{ site_name }}_vmme:
-      type: tosca.nodes.Slice
-      properties:
-        must-exist: true
-        name: {{ site_name }}_vmme1
-
-    {{ site_name }}_oaispgw:
-      type: tosca.nodes.Slice
-      properties:
-        must-exist: true
-        name: {{ site_name }}_oaispgw1
-
-
 # ONOS_Fabric, fully created in fabric.yaml
     service#ONOS_Fabric:
       type: tosca.nodes.ONOSService
@@ -151,7 +130,7 @@ topology_template:
         - interface:
             node: in#wanside
             relationship: tosca.relationships.IsType
-
+{#
 # Define Private Network Template
     private_network_template:
       type: tosca.nodes.NetworkTemplate
@@ -209,4 +188,4 @@ topology_template:
           - owner:
               node: {{ site_name }}_oaispgw
               relationship: tosca.relationships.MemberOfSlice
-
+#}
