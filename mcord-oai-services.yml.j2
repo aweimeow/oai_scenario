@@ -100,6 +100,7 @@ topology_template:
       properties:
           name: private_network_template
           visibility: private
+          access: indirect
           translation: none
           vtn_kind: PRIVATE
 
@@ -379,10 +380,22 @@ topology_template:
             node: service#oaimme
             relationship: tosca.relationships.BelongsToOne
 
-    serviceinstance#vHSS_instance:
+    serviceinstance#vHSS_instance1:
       type: tosca.nodes.VHSSTenant
       properties:
         name: vhss1
+      requirements:
+        - vhss_vendor:
+            node: oai_vhss
+            relationship: tosca.relationships.BelongsToOne
+        - owner:
+            node: service#oaihss
+            relationship: tosca.relationships.BelongsToOne
+
+    serviceinstance#vHSS_instance2:
+      type: tosca.nodes.VHSSTenant
+      properties:
+        name: vhss2
       requirements:
         - vhss_vendor:
             node: oai_vhss

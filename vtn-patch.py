@@ -1,8 +1,11 @@
 #! /usr/bin/python
 
+import os
 import re
 import sys
+import copy
 import json
+import time
 from base64 import b64encode
 from subprocess import Popen, PIPE
 
@@ -15,26 +18,38 @@ def curl(url, method="GET", headers=["Accept: application/json"], data=None):
     if method in ["GET", "DELETE"] and data:
         raise Exception("GET/DELETE method don't allow data streaming.")
 
-    headers = ["-H %s" % header for header in headers]
+    headers = ["-H '%s'" % header for header in headers]
     headers_str = " ".join(headers)
 
-    command = "curl -X {method} '{headers}'"
+    command = "curl -v -X {method} {headers}"
     command = command.format(method=method, headers=headers_str)
 
     if data:
-        command += " -d '{data}'".format(data=data)
+        command += " -d '{data}'".format(data=json.dumps(data))
 
     command += " {url}".format(url=url)
 
-    p = Popen(command.split(), stdout=PIPE, stderr=PIPE)
+    print(command)
+
+    p = Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
     stdout, stderr = p.communicate()
 
-    return json.decode(stdout)
+    print(stderr)
+
+    ret_val = json.loads(stdout) if method in ["GET"] else ""
+
+    # Sleep for too fast, avoid ONOS didn't receive
+    time.sleep(1)
+
+    return ret_val
 
 def headnode_ip():
     " Get headnode IP address from ~/.ssh/config "
 
-    with open("~/.ssh/config", "r") as openfile:
+    HOME = os.getenv('HOME')
+
+
+    with open("%s/.ssh/config" % HOME, "r") as openfile:
         config = openfile.read()
 
     pattern = r"Host head1\n  HostName (\d+\.\d+\.\d+\.\d+)"
@@ -43,19 +58,22 @@ def headnode_ip():
     if not result:
         sys.exit("Can't find ~/.ssh/config")
 
-    return result.groups(1)
+    return result.groups(1)[0]
 
 def parse_hostdata(data):
     " Get Host mac, ipaddr pair as dictionary "
 
-    hosts = [{d["mac"]: d["ipAddresses"][0]} for d in data["hosts"]]
+    hosts = {d["mac"]: d["ipAddresses"][0] for d in data["hosts"]}
     return hosts
 
 def parse_groupdata(data):
 
     group_data = list()
 
-    for group in data['groups'][1:]:
+    for group in data['groups']:
+        if not group['buckets']:
+            continue
+
         info = {
             'deviceId': group['deviceId'],
             'appCookie': group['appCookie'],
@@ -107,19 +125,19 @@ def update_groupdata(hostdata, groupdata):
     group_postdata = list()
 
     for data in groupdata:
-        gd = GROUP_TEMPLATE.copy()
-        gd['appCookie'] = data['appCookie']
-        gd['groupId'] = data['groupId']
-        gd['deviceId'] = data['deviceId']
+        gd = copy.deepcopy(GROUP_TEMPLATE)
+        gd['appCookie'] = data['appCookie'].encode()
+        gd['groupId'] = data['groupId'].encode()
+        gd['deviceId'] = data['deviceId'].encode()
 
         for bucketdata in data['buckets']:
-            bucket = BUCKET_TEMPLATE.copy()
+            bucket = copy.deepcopy(BUCKET_TEMPLATE)
             instruction = bucket['treatment']['instructions']
 
             # Replace mac, ip, port information into instruction
-            instruction[0]['mac'] = bucketdata['mac']
-            instruction[1]['ip'] = hostdata[bucketdata['mac']]
-            instruction[2]['port'] = bucketdata['port']
+            instruction[0]['mac'] = bucketdata['mac'].encode()
+            instruction[1]['ip'] = hostdata[bucketdata['mac']].encode()
+            instruction[2]['port'] = bucketdata['port'].encode()
 
             gd['buckets'].append(bucket)
 
@@ -139,16 +157,24 @@ if __name__ == '__main__':
 
     credit = b64encode("onos:rocks")
 
-    headers = [
+    # Header used with no streaming data, e.g.: GET, DELETE 
+    header1 = [
         "Accept: application/json",
-        "Authorization: {credit}" % credit,
+        "Authorization: Basic {credit}".format(credit=credit),
+    ]
+
+    # Header used with streaming data, e.g.: PUT, POST
+    header2 = [
+        "Accept: application/json",
+        "Content-type: application/json",
+        "Authorization: Basic {credit}".format(credit=credit),
     ]
 
     # Get Host data in {mac: ip} dictionary
-    hostdata = parse_hostdata(curl(HOSTAPI_URL, headers=headers))
+    hostdata = parse_hostdata(curl(HOSTAPI_URL, headers=header1))
 
     # Get Group data
-    groupdata = parse_groupdata(curl(GROUPAPI_URL, headers=headers))
+    groupdata = parse_groupdata(curl(GROUPAPI_URL, headers=header1))
 
     # DELETE current Group data
     for group in groupdata:
@@ -156,12 +182,14 @@ if __name__ == '__main__':
             devid=group['deviceId'], appcookie=group['appCookie']
         )
 
-        curl(DELETE_URL, method='DELETE', headers=headers)
+        curl(DELETE_URL, method='DELETE', headers=header1)
 
     group_postdata = update_groupdata(hostdata, groupdata)
 
     # CREATE new Group data
     for group in group_postdata:
-        CREATE_URL = GROUPAPI_URL + '/{devid}'.format(devid=group['deviceId'])
+        devid = group.pop('deviceId')
+        CREATE_URL = GROUPAPI_URL + '/{devid}'.format(devid=devid)
 
-        curl(CREATE_URL, method='POST', headers=headers, data=group)
+        for i in range(2):
+            curl(CREATE_URL, method='POST', headers=header2, data=group)
