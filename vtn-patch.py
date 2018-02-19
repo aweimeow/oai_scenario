@@ -34,12 +34,7 @@ def curl(url, method="GET", headers=["Accept: application/json"], data=None):
     p = Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
     stdout, stderr = p.communicate()
 
-    print(stderr)
-
     ret_val = json.loads(stdout) if method in ["GET"] else ""
-
-    # Sleep for too fast, avoid ONOS didn't receive
-    time.sleep(1)
 
     return ret_val
 
@@ -191,5 +186,8 @@ if __name__ == '__main__':
         devid = group.pop('deviceId')
         CREATE_URL = GROUPAPI_URL + '/{devid}'.format(devid=devid)
 
-        for i in range(2):
-            curl(CREATE_URL, method='POST', headers=header2, data=group)
+        curl(GROUPAPI_URL, headers=header1)
+        curl(CREATE_URL, method='POST', headers=header2, data=group)
+
+        # Sleep to avoid ONOS can't add flow
+        time.sleep(2)
