@@ -21,7 +21,7 @@ cp mcord-oai-service-graph.yml.j2 $DST/platform-install/roles/cord-profile/templ
 
 # Use custom version of vhss, vmme instead official
 cd ~/cord/orchestration/xos_services
-rm -rf vhss vmme
+rm -rf vhss vmme oaispgw
 git clone https://github.com/aweimeow/vMME vmme
 git clone https://github.com/aweimeow/vHSS vhss
 git clone https://github.com/aweimeow/oaispgw oaispgw
