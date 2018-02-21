@@ -36,6 +36,7 @@ imports:
    - custom_types/vmmetenant.yaml
    - custom_types/oaispgw.yaml
    - custom_types/oaispgwinstance.yaml
+   - custom_types/mcordservice.yaml
 
 topology_template:
   node_templates:
@@ -120,6 +121,19 @@ topology_template:
           vtn_kind: PUBLIC
 
 # mme, hss, spgw network, fully created in oai-net.yaml
+    vbbu_network:
+      type: tosca.nodes.Network
+      properties:
+        subnet: 10.0.5.0/24
+        name: vbbu_network
+      requirements:
+          - template:
+              node: private_network_template
+              relationship: tosca.relationships.BelongsToOne
+          - owner:
+              node: {{ site_name }}_vbbu
+              relationship: tosca.relationships.BelongsToOne
+
     vmme_network:
       type: tosca.nodes.Network
       properties:
@@ -169,6 +183,18 @@ topology_template:
 
 ### Service Class
 
+# OAI BBU Service, no service instance, only create Service & Network
+    service#oaibbu:
+      type: tosca.nodes.MCORDService
+      properties:
+        name: VBBUService
+        view_url: /admin/vbbu/vbbu/$id$/
+        kind: vbbu
+        public_key: {{ lookup('file', config_cord_profile_dir + '/key_import/mcord_rsa.pub') }}
+        private_key_fn: /opt/xos/services/vbbu/keys/mcord_rsa
+      artifacts:
+        pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
+
 # OAI HSS Service, generated 1 service instance: vHSS
     service#oaihss:
       type: tosca.nodes.VHSSService
@@ -206,6 +232,29 @@ topology_template:
         pubkey: /opt/cord_profile/key_import/oaisgpw_rsa.pub
 
 ### Service Slice
+
+# OAI BBU Service slice, Use image-oai as default iamge
+    {{ site_name }}_vbbu:
+      description: vBBU Service Slice
+      type: tosca.nodes.Slice
+      properties:
+          name: {{ site_name }}_vbbu1
+          default_isolation: vm
+          network: noauto
+      requirements:
+          - site:
+              node: {{ site_name }}
+              relationship: tosca.relationships.BelongsToOne
+          - service:
+              node: service#oaibbu
+              relationship: tosca.relationships.BelongsToOne
+          - default_image:
+              node: image-oai
+              relationship: tosca.relationships.BelongsToOne
+          - default_flavor:
+              node: m1.medium
+              relationship: tosca.relationships.BelongsToOne
+
 
 # OAI MME Service slice, Use image-oai as default iamge
     {{ site_name }}_vmme:
@@ -298,6 +347,17 @@ topology_template:
           - default_flavor:
               node: m1.large
               relationship: tosca.relationships.BelongsToOne
+
+# vBBU private network Slice
+    vbbu_network_slice:
+      type: tosca.nodes.NetworkSlice
+      requirements:
+        - network:
+            node: vbbu_network
+            relationship: tosca.relationships.BelongsToOne
+        - slice:
+            node: {{ site_name }}_vbbu
+            relationship: tosca.relationships.BelongsToOne
 
 # vMME private network Slice
     vmme_network_slice:

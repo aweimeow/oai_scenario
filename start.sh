@@ -4,6 +4,9 @@ DST=~/cord/build
 TMP=/tmp/oai_scenario_backup/
 mkdir /tmp/oai_scenario_backup
 
+# Remove backup folder
+rm -rf $TMP
+
 # Backup all old files
 cp $DST/docker_images.yml $TMP
 cp $DST/../.repo/manifests/default.xml $TMP
@@ -21,13 +24,14 @@ cp mcord-oai-service-graph.yml.j2 $DST/platform-install/roles/cord-profile/templ
 
 # Use custom version of vhss, vmme instead official
 cd ~/cord/orchestration/xos_services
-rm -rf vhss vmme oaispgw
+rm -rf vbbu vhss vmme oaispgw
+git clone https://github.com/aweimeow/vBBU vbbu
 git clone https://github.com/aweimeow/vMME vmme
 git clone https://github.com/aweimeow/vHSS vhss
 git clone https://github.com/aweimeow/oaispgw oaispgw
 
 # Checkout to target branch
-for var in "vmme" "vhss" "oaispgw"; do
+for var in "vbbu" "vmme" "vhss" "oaispgw"; do
     cd $var;
     git remote add opencord https://github.com/aweimeow/$var.git;
     git checkout cord-4.1;

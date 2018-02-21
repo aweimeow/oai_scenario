@@ -18,6 +18,7 @@ tosca_definitions_version: tosca_simple_yaml_1_0
 description: Persist M-CORD Subscriber
 
 imports:
+   - custom_types/mcordservice.yaml
    - custom_types/vhssservice.yaml
    - custom_types/vmmeservice.yaml
    - custom_types/oaispgw.yaml
@@ -25,6 +26,12 @@ imports:
 
 topology_template:
   node_templates:
+
+    # Service VBBU
+    service#oaibbu:
+      type: tosca.nodes.MCORDService
+      properties:
+        name: VBBUService
 
     # Service VHSS
     service#oaihss:
@@ -43,6 +50,32 @@ topology_template:
       type: tosca.nodes.OAISPGW
       properties:
         name: OAISPGW
+
+    # Service dependency from VBBU to VMME
+    mcord_vbbu_mme:
+      type: tosca.nodes.ServiceDependency
+      properties:
+        connect_method: None
+      requirements:
+        - subscriber_service:
+            node: service#oaibbu
+            relationship: tosca.relationships.BelongsToOne
+        - provider_service:
+            node: service#oaimme
+            relationship: tosca.relationships.BelongsToOne
+
+    # Service dependency from VBBU to VSPGW
+    mcord_vbbu_spgw:
+      type: tosca.nodes.ServiceDependency
+      properties:
+        connect_method: None
+      requirements:
+        - subscriber_service:
+            node: service#oaibbu
+            relationship: tosca.relationships.BelongsToOne
+        - provider_service:
+            node: service#oaispgw
+            relationship: tosca.relationships.BelongsToOne
 
     # Service dependency from VMME to VHSS
     mcord_vmme_hss:
