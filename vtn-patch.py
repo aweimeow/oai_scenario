@@ -147,41 +147,42 @@ def handshake_patch(src_net, dst_net, src_gw):
 
     FLOW_TEMPLATE = {
         "flows": [
-        {
-            "priority": 6000,
-            "timeout": 0,
-            "isPermanent": true,
-            "deviceId": "%s" % DEV_ID,
-            "treatment": {
-                "instructions": [
-                    {
-                        "type":"L3MODIFICATION",
-                        "subtype":"IPV4_SRC",
-                        "ip": "%s" % src_gw
-                    },
-                    {
-                        "type": "TABLE",
-                        "port": "4"
-                    }
-                ]
-            },
-            "selector": {
-                "criteria": [
-                    {
-                        "type": "ETH_TYPE",
-                        "ethType": "0x0800"
-                    },
-                    {
-                        "type": "IPV4_SRC",
-                        "ip": "%s" % src_net
-                    },
-                    {
-                        "type": "IPV4_DST",
-                        "ip": "%s" % dst_net
-                    }
-                ]
+            {
+                "priority": 6000,
+                "timeout": 0,
+                "isPermanent": true,
+                "deviceId": "%s" % DEV_ID,
+                "treatment": {
+                    "instructions": [
+                        {
+                            "type":"L3MODIFICATION",
+                            "subtype":"IPV4_SRC",
+                            "ip": "%s" % src_gw
+                        },
+                        {
+                            "type": "TABLE",
+                            "port": "4"
+                        }
+                    ]
+                },
+                "selector": {
+                    "criteria": [
+                        {
+                            "type": "ETH_TYPE",
+                            "ethType": "0x0800"
+                        },
+                        {
+                            "type": "IPV4_SRC",
+                            "ip": "%s" % src_net
+                        },
+                        {
+                            "type": "IPV4_DST",
+                            "ip": "%s" % dst_net
+                        }
+                    ]
+                }
             }
-        }
+        ]
     }
 
     return FLOW_TEMPLATE
