@@ -34,7 +34,6 @@
 <project path="orchestration/xos_services/olt-service" name="olt-service" groups="orchestration,services"/>
 <project path="orchestration/xos_services/vtn-service" name="vtn-service" groups="orchestration,services"/>
 
-<project path="orchestration/xos_services/vbbu" name="vBBU" groups="orchestration,services"/>
 <project path="orchestration/xos_services/vpgwc" name="vPGWC" groups="orchestration,services"/>
 <project path="orchestration/xos_services/vsgw" name="vSGW" groups="orchestration,services"/>
 <project path="orchestration/xos_services/progran" name="progran" groups="orchestration,services"/>
@@ -48,6 +47,7 @@
 <project path="orchestration/xos_services/epc-service" name="epc-service" groups="orchestration,services"/>
 
 <!-- vMME, vHSS, oaispgw is 3 component for oai-based M-CORD -->
+<project path="orchestration/xos_services/vbbu" name="vBBU" groups="orchestration,services"/>
 <project path="orchestration/xos_services/vmme" name="vMME" groups="orchestration,services"/>
 <project path="orchestration/xos_services/vhss" name="vHSS" groups="orchestration,services"/>
 <project path="orchestration/xos_services/oaispgw" name="oaispgw" groups="orchestration,services"/>

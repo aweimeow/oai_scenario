@@ -36,7 +36,7 @@ imports:
    - custom_types/vmmetenant.yaml
    - custom_types/oaispgw.yaml
    - custom_types/oaispgwinstance.yaml
-   - custom_types/mcordservice.yaml
+   - custom_types/vbbuservice.yaml
 
 topology_template:
   node_templates:
@@ -185,7 +185,7 @@ topology_template:
 
 # OAI BBU Service, no service instance, only create Service & Network
     service#oaibbu:
-      type: tosca.nodes.MCORDService
+      type: tosca.nodes.VBBUService
       properties:
         name: VBBUService
         view_url: /admin/vbbu/vbbu/$id$/
