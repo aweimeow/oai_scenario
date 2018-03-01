@@ -9,6 +9,8 @@ import time
 from base64 import b64encode
 from subprocess import Popen, PIPE
 
+DEV_ID = ''
+
 def curl(url, method="GET", headers=["Accept: application/json"], data=None):
     " Simple cURL wrapper "
     # url: ONOS API endpoint
@@ -140,6 +142,51 @@ def update_groupdata(hostdata, groupdata):
 
     return group_postdata
 
+
+def handshake_patch(src_net, dst_net, src_gw):
+
+    FLOW_TEMPLATE = {
+        "flows": [
+        {
+            "priority": 6000,
+            "timeout": 0,
+            "isPermanent": true,
+            "deviceId": "%s" % DEV_ID,
+            "treatment": {
+                "instructions": [
+                    {
+                        "type":"L3MODIFICATION",
+                        "subtype":"IPV4_SRC",
+                        "ip": "%s" % src_gw
+                    },
+                    {
+                        "type": "TABLE",
+                        "port": "4"
+                    }
+                ]
+            },
+            "selector": {
+                "criteria": [
+                    {
+                        "type": "ETH_TYPE",
+                        "ethType": "0x0800"
+                    },
+                    {
+                        "type": "IPV4_SRC",
+                        "ip": "%s" % src_net
+                    },
+                    {
+                        "type": "IPV4_DST",
+                        "ip": "%s" % dst_net
+                    }
+                ]
+            }
+        }
+    }
+
+    return FLOW_TEMPLATE
+
+
 if __name__ == '__main__':
     # Get Head Node IP Address and select connect port number
     ip = headnode_ip()
@@ -147,7 +194,9 @@ if __name__ == '__main__':
 
     # Define ONOS API URL and apipoint
     ONOS_URL = 'http://{ip}:{port}/onos/v1/'.format(ip=ip, port=port)
+    DEVICEAPI_URL = ONOS_URL + 'devices'
     HOSTAPI_URL = ONOS_URL + 'hosts'
+    FLOWAPI_URL = ONOS_URL + 'flows'
     GROUPAPI_URL = ONOS_URL + 'groups'
 
     credit = b64encode("onos:rocks")
@@ -164,6 +213,12 @@ if __name__ == '__main__':
         "Content-type: application/json",
         "Authorization: Basic {credit}".format(credit=credit),
     ]
+
+    # Get First Available OVS's Device ID
+    global DEV_ID
+    devices = curl(DEVICEAPI_URL, headers=header1)["devices"]
+    device = filter(lambda x: x["available"] is True, devices).next()
+    DEV_ID = device["id"]
 
     # Get Host data in {mac: ip} dictionary
     hostdata = parse_hostdata(curl(HOSTAPI_URL, headers=header1))
@@ -189,5 +244,15 @@ if __name__ == '__main__':
         curl(GROUPAPI_URL, headers=header1)
         curl(CREATE_URL, method='POST', headers=header2, data=group)
 
-        # Sleep to avoid ONOS can't add flow
-        time.sleep(2)
+    handshake_patch_data = [
+        ('10.0.6.0/24', '10.0.5.0/24', '10.0.6.1'),
+        ('10.0.8.0/24', '10.0.5.0/24', '10.0.8.1'),
+        ('10.0.7.0/24', '10.0.6.0/24', '10.0.7.1'),
+        ('10.0.8.0/24', '10.0.6.0/24', '10.0.8.1')
+    ]
+
+    FLOW_CREATE_URL = FLOWAPI_URL + '?appId=87'
+
+    for data in handshake_patch_data:
+        flow = handshake_patch(data)
+        curl(FLOW_CREATE_URL, method='POST', headers=header2, data=flow)
