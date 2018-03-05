@@ -260,3 +260,7 @@ buildable_images:
     path: "xos/synchronizer"
     dockerfile: "Dockerfile.synchronizer"
 
+  - name: xosproject/vbbu-synchronizer
+    repo: vBBU
+    path: "xos/synchronizer"
+    dockerfile: "Dockerfile.synchronizer"
