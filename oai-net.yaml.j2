@@ -50,8 +50,11 @@ topology_template:
         - addresses_vhss:
             node: addresses_vhss
             relationship: tosca.relationships.ProvidesAddresses
-        - addresses_vspgw:
-            node: addresses_vspgw
+        - addresses_vspgwc:
+            node: addresses_vspgwc
+            relationship: tosca.relationships.ProvidesAddresses
+        - addresses_vspgwu:
+            node: addresses_vspgwu
             relationship: tosca.relationships.ProvidesAddresses
 
     service#vrouter:
@@ -81,12 +84,19 @@ topology_template:
         gateway_ip: 10.0.7.1
         gateway_mac: aa:bb:cc:dd:ee:02
 
-    addresses_vspgw:
+    addresses_vspgwc:
       type: tosca.nodes.AddressPool
       properties:
         addresses: 10.0.8.0/24
         gateway_ip: 10.0.8.1
         gateway_mac: aa:bb:cc:dd:ee:03
+
+    addresses_vspgwu:
+      type: tosca.nodes.AddressPool
+      properties:
+        addresses: 10.0.9.0/24
+        gateway_ip: 10.0.9.1
+        gateway_mac: aa:bb:cc:dd:ee:04
 
     vRouter_ONOS_app:
       type: tosca.nodes.ONOSvRouterApp
@@ -175,8 +185,8 @@ topology_template:
               node: {{ site_name }}_vhss
               relationship: tosca.relationships.MemberOfSlice
 
-# vSPGW Private Network
-    vspgw_network:
+# vSPGWC Private Network
+    vspgwc_network:
       type: tosca.nodes.network.Network
       properties:
           ip_version: 4
@@ -186,6 +196,20 @@ topology_template:
               node: private_network_template
               relationship: tosca.relationships.UsesNetworkTemplate
           - owner:
-              node: {{ site_name }}_oaispgw
+              node: {{ site_name }}_vspgwc
+              relationship: tosca.relationships.MemberOfSlice
+
+# vSPGWU Private Network
+    vspgwu_network:
+      type: tosca.nodes.network.Network
+      properties:
+          ip_version: 4
+          cidr: 10.0.9.0/24
+      requirements:
+          - network_template:
+              node: private_network_template
+              relationship: tosca.relationships.UsesNetworkTemplate
+          - owner:
+              node: {{ site_name }}_vspgwu
               relationship: tosca.relationships.MemberOfSlice
 #}
