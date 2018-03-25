@@ -30,8 +30,10 @@ imports:
    - custom_types/networkslice.yaml
    - custom_types/vhssservice.yaml
    - custom_types/vhsstenant.yaml
+   - custom_types/vhssvendor.yaml
    - custom_types/vmmeservice.yaml
    - custom_types/vmmetenant.yaml
+   - custom_types/vmmevendor.yaml
    - custom_types/vspgwcservice.yaml
    - custom_types/vspgwctenant.yaml
    - custom_types/vspgwuservice.yaml
@@ -303,6 +305,19 @@ topology_template:
               node: m1.medium
               relationship: tosca.relationships.BelongsToOne
 
+# OAI MME Vender
+    oai_vmme:
+      type: tosca.nodes.VMMEVendor
+      properties:
+        name: oai_vmme
+      requirements:
+        - image:
+            node: image-oai
+            relationship: tosca.relationships.BelongsToOne
+        - flavor:
+            node: m1.medium
+            relationship: tosca.relationships.BelongsToOne
+
 # OAI HSS Service slice, use image-oai as default image
     {{ site_name }}_vhss:
       description: vHSS Service Slice
@@ -324,6 +339,19 @@ topology_template:
           - default_flavor:
               node: m1.medium
               relationship: tosca.relationships.BelongsToOne
+
+# OAI HSS Vender
+    oai_vhss:
+      type: tosca.nodes.VHSSVendor
+      properties:
+        name: oai_vhss
+      requirements:
+        - image:
+            node: image-oai
+            relationship: tosca.relationships.BelongsToOne
+        - flavor:
+            node: m1.small
+            relationship: tosca.relationships.BelongsToOne
 
 # OAI SPGWC Service slice, Use image-oai as default image
     {{ site_name }}_vspgwc:
