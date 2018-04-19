@@ -567,10 +567,58 @@ topology_template:
             node: service#vspgwc
             relationship: tosca.relationships.BelongsToOne
 
+    serviceinstance#vSPGWC_instance2:
+      type: tosca.nodes.VSPGWCTenant
+      properties:
+        name: vspgwc2
+      requirements:
+        - vspgwc_vendor:
+            node: oai_vspgwc
+            relationship: tosca.relationships.BelongsToOne
+        - owner:
+            node: service#vspgwc
+            relationship: tosca.relationships.BelongsToOne
+
     serviceinstance#vSPGWU_instance1:
       type: tosca.nodes.VSPGWUTenant
       properties:
         name: vspgwu1
+      requirements:
+        - vspgwu_vendor:
+            node: oai_vspgwu
+            relationship: tosca.relationships.BelongsToOne
+        - owner:
+            node: service#vspgwu
+            relationship: tosca.relationships.BelongsToOne
+
+    serviceinstance#vSPGWU_instance2:
+      type: tosca.nodes.VSPGWUTenant
+      properties:
+        name: vspgwu2
+      requirements:
+        - vspgwu_vendor:
+            node: oai_vspgwu
+            relationship: tosca.relationships.BelongsToOne
+        - owner:
+            node: service#vspgwu
+            relationship: tosca.relationships.BelongsToOne
+
+    serviceinstance#vSPGWU_instance3:
+      type: tosca.nodes.VSPGWUTenant
+      properties:
+        name: vspgwu3
+      requirements:
+        - vspgwu_vendor:
+            node: oai_vspgwu
+            relationship: tosca.relationships.BelongsToOne
+        - owner:
+            node: service#vspgwu
+            relationship: tosca.relationships.BelongsToOne
+
+    serviceinstance#vSPGWU_instance4:
+      type: tosca.nodes.VSPGWUTenant
+      properties:
+        name: vspgwu4
       requirements:
         - vspgwu_vendor:
             node: oai_vspgwu
