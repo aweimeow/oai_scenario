@@ -1,0 +1,78 @@
+# Copyright 2017-present Open Networking Foundation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+---
+# mcord-virtual Pod Config
+# Creates a virtual multi-node M-CORD pod, aka "mcord-in-a-box"
+
+cord_scenario: cord
+cord_profile: mcord-oai
+
+# Variables
+credentials_dir: '/opt/credentials'
+pki_dir: '/opt/pki'
+ssh_pki_dir: '/opt/ssh_pki'
+
+# CORD-POD Configuration
+fabric_ip: '10.6.1.1/24'
+management_ip: '10.0.0.1/24'
+external_ip: 'external_ip_here'
+external_gw: 'external_gateway_here'
+external_iface: 'eth1'
+management_network: '10.0.0.0/24'
+
+fabric_include_names: 'p11p1, p11p2, p11p3, p11p4, eth2, eth3'
+fabric_exclude_names: 'eth0, eth1'
+management_include_names: 'eth0'
+management_exclude_names: 'eth1, eth2, eth3, p11p1, p11p2, p11p3, p11p4'
+
+deploy_docker_registry: "external_ip_here:5000"
+headnode: username@head_ip
+
+# NOTE: The `host_cord_profile_dir` variable below is the path to the cord_profile dir that
+# gets mounted to corddev VM.This `cord_profile` dir typically lives in a directory
+# one level up from the `cord` directory
+host_cord_profile_dir: "~/cord_profile"
+
+skipTags:
+  - 'set_compute_node_password'
+
+# Wait until headnode prepped before building containers, for consistent DNS
+docker_images_prereqs:
+  - prep-headnode
+
+copy_cord_prereqs:
+  - config-ssh-key
+
+# node topology
+physical_node_list:
+  - name: head1
+    aliases:
+      - head
+
+# Inventory for ansible, used to generate inventory.ini
+inventory_groups:
+  config:
+    localhost:
+      ansible_connection: local
+  build:
+    corddev:
+  head:
+    head1:
+      ansible_host: head_ip_here
+      ansible_port: head_ssh_port_here
+      ansible_user: head_ssh_user_here
+      ansible_ssh_pass: head_ssh_pass_here
+  compute:
