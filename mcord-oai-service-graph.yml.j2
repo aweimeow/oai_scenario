@@ -21,84 +21,104 @@ imports:
    - custom_types/vbbuservice.yaml
    - custom_types/vhssservice.yaml
    - custom_types/vmmeservice.yaml
-   - custom_types/oaispgw.yaml
+   - custom_types/vspgwcservice.yaml
+   - custom_types/vspgwuservice.yaml
    - custom_types/servicedependency.yaml
 
 topology_template:
   node_templates:
 
     # Service VBBU
-    service#oaibbu:
+    service#vbbu:
       type: tosca.nodes.VBBUService
       properties:
         name: VBBUService
 
     # Service VHSS
-    service#oaihss:
+    service#vhss:
       type: tosca.nodes.VHSSService
       properties:
         name: VHSSService
 
     # Service VMME
-    service#oaimme:
+    service#vmme:
       type: tosca.nodes.VMMEService
       properties:
         name: VMMEService
 
-    # Service VSPGW
-    service#oaispgw:
-      type: tosca.nodes.OAISPGW
+    # Service VSPGW Control Plane
+    service#vspgwc:
+      type: tosca.nodes.VSPGWCService
       properties:
-        name: OAISPGW
+        name: VSPGWCService
+
+    # Service VSPGW User Plane
+    service#vspgwu:
+      type: tosca.nodes.VSPGWUService
+      properties:
+        name: VSPGWUService
 
     # Service dependency from VBBU to VMME
-    mcord_vbbu_mme:
+    mcord_vbbu_vmme:
       type: tosca.nodes.ServiceDependency
       properties:
         connect_method: None
       requirements:
         - subscriber_service:
-            node: service#oaibbu
+            node: service#vbbu
             relationship: tosca.relationships.BelongsToOne
         - provider_service:
-            node: service#oaimme
+            node: service#vmme
             relationship: tosca.relationships.BelongsToOne
 
-    # Service dependency from VBBU to VSPGW
-    mcord_vbbu_spgw:
+    # Service dependency from VBBU to VSPGWU
+    mcord_vbbu_vspgwu:
       type: tosca.nodes.ServiceDependency
       properties:
         connect_method: None
       requirements:
         - subscriber_service:
-            node: service#oaibbu
+            node: service#vbbu
             relationship: tosca.relationships.BelongsToOne
         - provider_service:
-            node: service#oaispgw
+            node: service#vspgwu
             relationship: tosca.relationships.BelongsToOne
 
     # Service dependency from VMME to VHSS
-    mcord_vmme_hss:
+    mcord_vmme_vhss:
       type: tosca.nodes.ServiceDependency
       properties:
         connect_method: None
       requirements:
         - subscriber_service:
-            node: service#oaimme
+            node: service#vmme
             relationship: tosca.relationships.BelongsToOne
         - provider_service:
-            node: service#oaihss
+            node: service#vhss
             relationship: tosca.relationships.BelongsToOne
 
-    # Service dependency from VMME to VSPGW
-    mcord_vmme_spgw:
+    # Service dependency from VMME to VSPGWC
+    mcord_vmme_vspgwc:
       type: tosca.nodes.ServiceDependency
       properties:
         connect_method: None
       requirements:
         - subscriber_service:
-            node: service#oaimme
+            node: service#vmme
             relationship: tosca.relationships.BelongsToOne
         - provider_service:
-            node: service#oaispgw
+            node: service#vspgwc
+            relationship: tosca.relationships.BelongsToOne
+
+    # Service dependency from VSPGWU to VSPGWC
+    mcord_vspgwu_vspgwc:
+      type: tosca.nodes.ServiceDependency
+      properties:
+        connect_method: None
+      requirements:
+        - subscriber_service:
+            node: service#vspgwu
+            relationship: tosca.relationships.BelongsToOne
+        - provider_service:
+            node: service#vspgwc
             relationship: tosca.relationships.BelongsToOne
