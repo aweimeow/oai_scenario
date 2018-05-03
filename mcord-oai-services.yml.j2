@@ -29,13 +29,17 @@ imports:
    - custom_types/onosservice.yaml
    - custom_types/networkslice.yaml
    - custom_types/vhssservice.yaml
-   - custom_types/vhssvendor.yaml
    - custom_types/vhsstenant.yaml
+   - custom_types/vhssvendor.yaml
    - custom_types/vmmeservice.yaml
-   - custom_types/vmmevendor.yaml
    - custom_types/vmmetenant.yaml
-   - custom_types/oaispgw.yaml
-   - custom_types/oaispgwinstance.yaml
+   - custom_types/vmmevendor.yaml
+   - custom_types/vspgwcservice.yaml
+   - custom_types/vspgwctenant.yaml
+   - custom_types/vspgwcvendor.yaml
+   - custom_types/vspgwuservice.yaml
+   - custom_types/vspgwutenant.yaml
+   - custom_types/vspgwuvendor.yaml
    - custom_types/vbbuservice.yaml
 
 topology_template:
@@ -160,17 +164,30 @@ topology_template:
               node: {{ site_name }}_vhss
               relationship: tosca.relationships.BelongsToOne
 
-    vspgw_network:
+    vspgwc_network:
       type: tosca.nodes.Network
       properties:
         subnet: 10.0.8.0/24
-        name: vspgw_network
+        name: vspgwc_network
       requirements:
           - template:
               node: private_network_template
               relationship: tosca.relationships.BelongsToOne
           - owner:
-              node: {{ site_name }}_oaispgw
+              node: {{ site_name }}_vspgwc
+              relationship: tosca.relationships.BelongsToOne
+
+    vspgwu_network:
+      type: tosca.nodes.Network
+      properties:
+        subnet: 10.0.9.0/24
+        name: vspgwu_network
+      requirements:
+          - template:
+              node: private_network_template
+              relationship: tosca.relationships.BelongsToOne
+          - owner:
+              node: {{ site_name }}_vspgwu
               relationship: tosca.relationships.BelongsToOne
 
 {% if use_management_hosts %}
@@ -184,7 +201,7 @@ topology_template:
 ### Service Class
 
 # OAI BBU Service, no service instance, only create Service & Network
-    service#oaibbu:
+    service#vbbu:
       type: tosca.nodes.VBBUService
       properties:
         name: VBBUService
@@ -196,7 +213,7 @@ topology_template:
         pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
 
 # OAI HSS Service, generated 1 service instance: vHSS
-    service#oaihss:
+    service#vhss:
       type: tosca.nodes.VHSSService
       properties:
         name: VHSSService
@@ -208,7 +225,7 @@ topology_template:
         pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
 
 # OAI HSS Service, generated 1 service instance: vMME
-    service#oaimme:
+    service#vmme:
       type: tosca.nodes.VMMEService
       properties:
         name: VMMEService
@@ -219,17 +236,29 @@ topology_template:
       artifacts:
         pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
 
-# OAI SPGW Service, generated 1 service instance: vSPGW
-    service#oaispgw:
-      type: tosca.nodes.OAISPGW
+# OAI SPGWC Service, generated 1 service instance: vSPGWC
+    service#vspgwc:
+      type: tosca.nodes.VSPGWCService
       properties:
-        name: OAISPGW
-        view_url: /admin/oaispgw/oaispgw/$id$/
-        kind: oaiservice
-        public_key: {{ lookup('file', config_cord_profile_dir + '/key_import/oaispgw_rsa.pub') }}
-        private_key_fn: /opt/xos/services/oaispgw/keys/oaispgw_rsa
+        name: VSPGWCService
+        view_url: /admin/vspgwc/vspgwc/$id$/
+        kind: vspgwc
+        public_key: {{ lookup('file', config_cord_profile_dir + '/key_import/mcord_rsa.pub') }}
+        private_key_fn: /opt/xos/services/vspgwc/keys/mcord_rsa
       artifacts:
-        pubkey: /opt/cord_profile/key_import/oaisgpw_rsa.pub
+        pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
+
+# OAI SPGWU Service, generated 1 service instance: vSPGWU
+    service#vspgwu:
+      type: tosca.nodes.VSPGWUService
+      properties:
+        name: VSPGWUService
+        view_url: /admin/vspgwu/vspgwu/$id$/
+        kind: vspgwu
+        public_key: {{ lookup('file', config_cord_profile_dir + '/key_import/mcord_rsa.pub') }}
+        private_key_fn: /opt/xos/services/vspgwu/keys/mcord_rsa
+      artifacts:
+        pubkey: /opt/cord_profile/key_import/mcord_rsa.pub
 
 ### Service Slice
 
@@ -246,7 +275,7 @@ topology_template:
               node: {{ site_name }}
               relationship: tosca.relationships.BelongsToOne
           - service:
-              node: service#oaibbu
+              node: service#vbbu
               relationship: tosca.relationships.BelongsToOne
           - default_image:
               node: image-oai
@@ -269,7 +298,7 @@ topology_template:
               node: {{ site_name }}
               relationship: tosca.relationships.BelongsToOne
           - service:
-              node: service#oaimme
+              node: service#vmme
               relationship: tosca.relationships.BelongsToOne
           - default_image:
               node: image-oai
@@ -304,7 +333,7 @@ topology_template:
               node: {{ site_name }}
               relationship: tosca.relationships.BelongsToOne
           - service:
-              node: service#oaihss
+              node: service#vhss
               relationship: tosca.relationships.BelongsToOne
           - default_image:
               node: image-oai
@@ -326,12 +355,12 @@ topology_template:
             node: m1.small
             relationship: tosca.relationships.BelongsToOne
 
-# OAI SPGW Service slice, Use image-oai as default image
-    {{ site_name }}_oaispgw:
-      description: OAI SPGW Service Slice
+# OAI SPGWC Service slice, Use image-oai as default image
+    {{ site_name }}_vspgwc:
+      description: OAI SPGWC Service Slice
       type: tosca.nodes.Slice
       properties:
-          name: {{ site_name }}_oaispgw1
+          name: {{ site_name }}_vspgwc1
           default_isolation: vm
           network: noauto
       requirements:
@@ -339,14 +368,60 @@ topology_template:
               node: {{ site_name }}
               relationship: tosca.relationships.BelongsToOne
           - service:
-              node: service#oaispgw
+              node: service#vspgwc
               relationship: tosca.relationships.BelongsToOne
           - default_image:
               node: image-oai
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
-              node: m1.large
+              node: m1.medium
               relationship: tosca.relationships.BelongsToOne
+
+    oai_vspgwc:
+      type: tosca.nodes.VSPGWCVendor
+      properties:
+        name: oai_vspgwc
+      requirements:
+        - image:
+            node: image-oai
+            relationship: tosca.relationships.BelongsToOne
+        - flavor:
+            node: m1.medium
+            relationship: tosca.relationships.BelongsToOne
+
+# OAI SPGWU Service slice, Use image-oai as default image
+    {{ site_name }}_vspgwu:
+      description: OAI SPGWU Service Slice
+      type: tosca.nodes.Slice
+      properties:
+          name: {{ site_name }}_vspgwu1
+          default_isolation: vm
+          network: noauto
+      requirements:
+          - site:
+              node: {{ site_name }}
+              relationship: tosca.relationships.BelongsToOne
+          - service:
+              node: service#vspgwu
+              relationship: tosca.relationships.BelongsToOne
+          - default_image:
+              node: image-oai
+              relationship: tosca.relationships.BelongsToOne
+          - default_flavor:
+              node: m1.medium
+              relationship: tosca.relationships.BelongsToOne
+
+    oai_vspgwu:
+      type: tosca.nodes.VSPGWUVendor
+      properties:
+        name: oai_vspgwu
+      requirements:
+        - image:
+            node: image-oai
+            relationship: tosca.relationships.BelongsToOne
+        - flavor:
+            node: m1.medium
+            relationship: tosca.relationships.BelongsToOne
 
 # vBBU private network Slice
     vbbu_network_slice:
@@ -381,15 +456,27 @@ topology_template:
             node: {{ site_name }}_vhss
             relationship: tosca.relationships.BelongsToOne
 
-# vSPGW private network slice
-    vspgw_network_slice:
+# vSPGWC private network slice
+    vspgwc_network_slice:
       type: tosca.nodes.NetworkSlice
       requirements:
         - network:
-            node: vspgw_network
+            node: vspgwc_network
             relationship: tosca.relationships.BelongsToOne
         - slice:
-            node: {{ site_name }}_oaispgw
+            node: {{ site_name }}_vspgwc
+            relationship: tosca.relationships.BelongsToOne
+
+
+# vSPGWU private network slice
+    vspgwu_network_slice:
+      type: tosca.nodes.NetworkSlice
+      requirements:
+        - network:
+            node: vspgwu_network
+            relationship: tosca.relationships.BelongsToOne
+        - slice:
+            node: {{ site_name }}_vspgwu
             relationship: tosca.relationships.BelongsToOne
 
 # Management network slice
@@ -413,24 +500,34 @@ topology_template:
             node: {{ site_name }}_vhss
             relationship: tosca.relationships.BelongsToOne
 
-    vspgw_management_network:
+    vspgwc_management_network:
       type: tosca.nodes.NetworkSlice
       requirements:
         - network:
             node: management
             relationship: tosca.relationships.BelongsToOne
         - slice:
-            node: {{ site_name }}_oaispgw
+            node: {{ site_name }}_vspgwc
             relationship: tosca.relationships.BelongsToOne
 
-    vspgw_public_network:
+    vspgwu_management_network:
+      type: tosca.nodes.NetworkSlice
+      requirements:
+        - network:
+            node: management
+            relationship: tosca.relationships.BelongsToOne
+        - slice:
+            node: {{ site_name }}_vspgwu
+            relationship: tosca.relationships.BelongsToOne
+
+    vspgwu_public_network:
       type: tosca.nodes.NetworkSlice
       requirements:
         - network:
             node: public
             relationship: tosca.relationships.BelongsToOne
         - slice:
-            node: {{ site_name }}_oaispgw
+            node: {{ site_name }}_vspgwu
             relationship: tosca.relationships.BelongsToOne
 
 # OAI Service instances
@@ -443,7 +540,7 @@ topology_template:
             node: oai_vmme
             relationship: tosca.relationships.BelongsToOne
         - owner:
-            node: service#oaimme
+            node: service#vmme
             relationship: tosca.relationships.BelongsToOne
 
     serviceinstance#vHSS_instance:
@@ -455,23 +552,77 @@ topology_template:
             node: oai_vhss
             relationship: tosca.relationships.BelongsToOne
         - owner:
-            node: service#oaihss
+            node: service#vhss
             relationship: tosca.relationships.BelongsToOne
 
-    serviceinstance#vSPGW_instance1:
-      type: tosca.nodes.OAISPGWInstance
+    serviceinstance#vSPGWC_instance1:
+      type: tosca.nodes.VSPGWCTenant
       properties:
-        name: vspgw1
+        name: vspgwc1
       requirements:
+        - vspgwc_vendor:
+            node: oai_vspgwc
+            relationship: tosca.relationships.BelongsToOne
         - owner:
-            node: service#oaispgw
+            node: service#vspgwc
             relationship: tosca.relationships.BelongsToOne
 
-    serviceinstance#vSPGW_instance2:
-      type: tosca.nodes.OAISPGWInstance
+    serviceinstance#vSPGWC_instance2:
+      type: tosca.nodes.VSPGWCTenant
       properties:
-        name: vspgw2
+        name: vspgwc2
       requirements:
+        - vspgwc_vendor:
+            node: oai_vspgwc
+            relationship: tosca.relationships.BelongsToOne
         - owner:
-            node: service#oaispgw
+            node: service#vspgwc
+            relationship: tosca.relationships.BelongsToOne
+
+    serviceinstance#vSPGWU_instance1:
+      type: tosca.nodes.VSPGWUTenant
+      properties:
+        name: vspgwu1
+      requirements:
+        - vspgwu_vendor:
+            node: oai_vspgwu
+            relationship: tosca.relationships.BelongsToOne
+        - owner:
+            node: service#vspgwu
+            relationship: tosca.relationships.BelongsToOne
+
+    serviceinstance#vSPGWU_instance2:
+      type: tosca.nodes.VSPGWUTenant
+      properties:
+        name: vspgwu2
+      requirements:
+        - vspgwu_vendor:
+            node: oai_vspgwu
+            relationship: tosca.relationships.BelongsToOne
+        - owner:
+            node: service#vspgwu
+            relationship: tosca.relationships.BelongsToOne
+
+    serviceinstance#vSPGWU_instance3:
+      type: tosca.nodes.VSPGWUTenant
+      properties:
+        name: vspgwu3
+      requirements:
+        - vspgwu_vendor:
+            node: oai_vspgwu
+            relationship: tosca.relationships.BelongsToOne
+        - owner:
+            node: service#vspgwu
+            relationship: tosca.relationships.BelongsToOne
+
+    serviceinstance#vSPGWU_instance4:
+      type: tosca.nodes.VSPGWUTenant
+      properties:
+        name: vspgwu4
+      requirements:
+        - vspgwu_vendor:
+            node: oai_vspgwu
+            relationship: tosca.relationships.BelongsToOne
+        - owner:
+            node: service#vspgwu
             relationship: tosca.relationships.BelongsToOne
