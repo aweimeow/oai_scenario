@@ -1,5 +1,6 @@
 #!/bin/bash
 
+CORD_VER=cord-4.1
 DST=~/cord/build
 TMP=/tmp/oai_scenario_backup/
 mkdir /tmp/oai_scenario_backup
@@ -32,18 +33,12 @@ git clone https://github.com/aweimeow/vspgwc vspgwc
 git clone https://github.com/aweimeow/vspgwu vspgwu
 
 # Checkout to target branch
-for var in "vbbu" "vhss"; do
+for var in "vbbu" "vhss" "vmme" "vspgwc" "vspgwu"; do
     cd $var;
     git remote add opencord https://github.com/aweimeow/$var.git;
-    git checkout cord-4.1;
-    git pull opencord cord-4.1;
-    cd ..;
-done
-
-for var in "vspgwc" "vspgwu" "vmme"; do
-    cd $var;
-    git remote add opencord https://github.com/aweimeow/$var.git;
-    git checkout cp_seperated;
-    git pull opencord cp_seperated;
+    git checkout ciab-4.1;
+    git checkout -b $CORD_VER;
+    mkdir .git/refs/remotes/opencord/;
+    echo $(git log --format="%H" -n 1) > .git/refs/remotes/opencord/$CORD_VER;
     cd ..;
 done

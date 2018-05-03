@@ -5,6 +5,25 @@ And only support `cord-4.1` branch.
 
 `cord-5.0` support is work in progress, will support in the furture.
 
+## Branchs
+
+We have 2 major branchs, master(ciab) and cordpod.
+Now both support on ONF CORD project `cord-4.1` branch.
+
+Difference between ciab and cordpod is implement in OAI Services network.
+
+ciab uses the Service Dependencies function to make services communicate with
+each gateway.
+
+![](https://raw.githubusercontent.com/aweimeow/oai_scenario/master/assets/service_graph.png)
+
+cordpod uses flat network insteads of service chain, 
+and have 2 layer XOS Services, vepc in upper layer, vhss, vmme, vspgw in lower
+layer.
+
+We can assign connection relation in vepc and vepc will going to create other
+child services.
+
 ## Installation
 
 ```
@@ -90,7 +109,7 @@ root@spgw:~/openair-cn/SCRIPT$ ./run_spgw
 ```
 
 As following snapshot:  
-![](https://raw.githubusercontent.com/aweimeow/oai_scenario/master/snapshot.png)
+![](https://raw.githubusercontent.com/aweimeow/oai_scenario/master/assets/snapshot.png)
 
 ## LICENSE
 
