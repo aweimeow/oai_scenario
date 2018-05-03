@@ -265,5 +265,5 @@ xos_images:
     checksum: "sha256:ebf007ba3ec1043b7cd011fc6668e2a1d1d4c69c41071e8513ab355df7a057cb"
 
   - name: "image-oai"
-    url: "https://github.com/aweimeow/oai_scenario/releases/download/v2.0.0.alpha/oai_cp_sep_compress.qcow2"
+    url: "https://github.com/aweimeow/oai_scenario/releases/download/ciab-4.1/oai_cp_sep_compress.qcow2"
     checksum: "sha256:3f2044c59063b6ee72d898204e4cfa9beb08a5854f6a4bae589b01a11508cbcf"
