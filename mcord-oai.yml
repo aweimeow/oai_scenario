@@ -17,6 +17,9 @@
 # profile_manifests/mcord.yml
 # Configures an M-CORD pod
 
+# Profile info located in orchestration/profile/<cord_use_case>
+cord_use_case: mcord
+
 # site configuration
 site_name: mysite
 site_humanname: MySite
