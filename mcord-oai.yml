@@ -38,7 +38,6 @@ xos_tosca_config_templates:
   - oai-net.yaml
   - management-net.yaml
   - public-net.yaml
-  - vrouter.yaml
   - xos-gui-extensions.yml
 
 # XOS new version's TOSCA config
@@ -46,9 +45,6 @@ xos_new_tosca_config_templates:
   - mcord-oai-services.yml
   - mcord-oai-service-graph.yml
   - service-graph-constraints.yaml
-
-xos_other_templates:
-  - fabric-network-cfg.json
 
 # GUI Config [new GUI]
 gui_project_name: "M-CORD"
