@@ -1,9 +1,10 @@
 # oai_scenario
 
-This project is based on M-CORD `cord-4.1` branch.  
-And only support `cord-4.1` branch.  
-
+This branch corresponded to `cord-5.0` in official branch, 
 `cord-5.0` support is work in progress, will support in the furture.
+
+Now we are working on make eNB can work with OAI M-CORD CORD-POD ver., 
+Any contribution are welcome.
 
 ## Branchs
 
