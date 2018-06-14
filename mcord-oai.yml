@@ -37,6 +37,7 @@ xos_tosca_config_templates:
   - fabric-service.yaml
   - management-net.yaml
   - mcord-oai-services.yml
+  - mcord-oai-address-manager.yml
   - xos-gui-extensions.yml
   - service-graph-constraints.yaml
 
@@ -107,6 +108,11 @@ mcord_networks:
     template: private_template
   - name: vspgwu_network
     subnet: 10.0.9.0/24
+    permit_all_slices: True
+    owner: vspgwu
+    template: flat_template
+  - name: public_network
+    subnet: 10.8.0.0/24
     permit_all_slices: True
     owner: vspgwu
     template: flat_template

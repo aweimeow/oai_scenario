@@ -154,7 +154,7 @@ topology_template:
               node: image-oai
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
-              node: m1.large
+              node: m1.medium
               relationship: tosca.relationships.BelongsToOne
 
     oai_mme:
@@ -166,7 +166,7 @@ topology_template:
             node: image-oai
             relationship: tosca.relationships.BelongsToOne
         - flavor:
-            node: m1.large
+            node: m1.medium
             relationship: tosca.relationships.BelongsToOne
 
 #vSPGWC Service
@@ -197,7 +197,7 @@ topology_template:
               node: image-oai
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
-              node: m1.large
+              node: m1.medium
               relationship: tosca.relationships.BelongsToOne
 
     oai_vspgwc:
@@ -209,7 +209,7 @@ topology_template:
             node: image-oai
             relationship: tosca.relationships.BelongsToOne
         - flavor:
-            node: m1.large
+            node: m1.medium
             relationship: tosca.relationships.BelongsToOne
 
 
@@ -241,19 +241,19 @@ topology_template:
               node: image-oai
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
-              node: m1.xlarge
+              node: m1.large
               relationship: tosca.relationships.BelongsToOne
 
     oai_vspgwu:
       type: tosca.nodes.VSPGWUVendor
       properties:
-        name: intel_vspgwu
+        name: oai_vspgwu
       requirements:
         - image:
             node: image-oai
             relationship: tosca.relationships.BelongsToOne
         - flavor:
-            node: m1.xlarge
+            node: m1.large
             relationship: tosca.relationships.BelongsToOne
 
 # vHSS service
@@ -285,7 +285,7 @@ topology_template:
               node: image-oai
               relationship: tosca.relationships.BelongsToOne
           - default_flavor:
-              node: m1.large
+              node: m1.small
               relationship: tosca.relationships.BelongsToOne
 
     oai_hss:
@@ -297,7 +297,7 @@ topology_template:
             node: image-oai
             relationship: tosca.relationships.BelongsToOne
         - flavor:
-            node: m1.large
+            node: m1.small
             relationship: tosca.relationships.BelongsToOne
 
 # vEPC Service
