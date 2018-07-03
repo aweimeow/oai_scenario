@@ -8,6 +8,7 @@ DST=~/cord
 cp docker_images.yml $DST/build
 cp mcord-oai.yml $DST/orchestration/profiles/mcord/
 
+cp mcord-oai-virtual.yml $DST/orchestration/profiles/mcord/podconfig/
 cp mcord-oai-physical.yml $DST/orchestration/profiles/mcord/podconfig/
 cp mcord-oai-services.yml.j2 $DST/orchestration/profiles/mcord/templates/
 cp mcord-oai-address-manager.yml.j2 $DST/orchestration/profiles/mcord/templates/
