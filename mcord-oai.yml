@@ -36,9 +36,9 @@ xos_tosca_config_templates:
   - vtn-service.yaml
   - fabric-service.yaml
   - management-net.yaml
+  - xos-gui-extensions.yml
   - mcord-oai-services.yml
   - mcord-oai-address-manager.yml
-  - xos-gui-extensions.yml
   - service-graph-constraints.yaml
 
 # GUI Config [new GUI]

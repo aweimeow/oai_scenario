@@ -30,7 +30,6 @@
       - vhss_network
       - vspgwc_network
       - vspgwu_network
-      - public_network
     test_services:
       - vhss
       - vmme
@@ -45,7 +44,6 @@
       - { vm: vspgwc, network: vspgwc_network }
       - { vm: vspgwu, network: management }
       - { vm: vspgwu, network: vspgwu_network }
-      - { vm: vspgwu, network: public_network }
     epc_blueprint: mcord-oai
     epc_sync_objects:
       - vspgwu/vspgwutenants
