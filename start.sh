@@ -17,7 +17,7 @@ cp mcord-oai-test-playbook.yml $DST/orchestration/profiles/mcord/test/
 # Use custom version of services instead official
 cd ~/cord/orchestration/xos_services
 
-for var in "vbbu" "vhss" "vmme" "vspgwc" "vspgwu"; do
+for var in "vbbu" "vhss" "vmme" "vspgwc" "vspgwu" "epc-service"; do
     rm -rf $var;
     git clone https://github.com/aweimeow/$var.git $var;
     cd $var;
