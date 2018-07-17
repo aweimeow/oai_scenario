@@ -8,10 +8,14 @@ DST=~/cord
 cp docker_images.yml $DST/build
 cp mcord-oai.yml $DST/orchestration/profiles/mcord/
 
+# Copy podconfig
 cp mcord-oai-virtual.yml $DST/orchestration/profiles/mcord/podconfig/
 cp mcord-oai-physical.yml $DST/orchestration/profiles/mcord/podconfig/
+
+# Copy Template files
 cp mcord-oai-services.yml.j2 $DST/orchestration/profiles/mcord/templates/
 cp mcord-oai-address-manager.yml.j2 $DST/orchestration/profiles/mcord/templates/
+cp vtn-service.yaml.j2 $DST/orchestration/profiles/mcord/templates/
 cp mcord-oai-test-playbook.yml $DST/orchestration/profiles/mcord/test/
 
 # Use custom version of services instead official

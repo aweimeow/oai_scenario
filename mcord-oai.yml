@@ -73,6 +73,8 @@ xos_services:
   - name: vhss
     path: orchestration/xos_services/vhss
     keypair: mcord_rsa
+  - name: vrouter
+    path: orchestration/xos_services/vrouter
   - name: vepc
     path: orchestration/xos_services/epc-service
     keypair: mcord_rsa
@@ -112,10 +114,10 @@ mcord_networks:
     owner: vspgwu
     template: flat_template
   - name: public_network
-    subnet: 10.8.0.0/24
+    subnet: 10.8.1.0/24
     permit_all_slices: True
     owner: vspgwu
-    template: flat_template
+    template: public_template
 
 profile_library: "mcord"
 
