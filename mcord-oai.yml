@@ -17,6 +17,9 @@
 # profile_manifests/mcord.yml
 # Configures an M-CORD pod
 
+# Profile info located in orchestration/profiles/<cord_use_case>
+cord_use_case: mcord
+
 # site configuration
 site_name: mysite
 site_humanname: MySite
@@ -28,24 +31,15 @@ deployment_type: MyDeployment
 use_fabric: True
 use_maas: True
 
-# XOS old version's TOSCA config
+# XOS config
 xos_tosca_config_templates:
   - vtn-service.yaml
   - fabric-service.yaml
-  - oai-net.yaml
   - management-net.yaml
-  - public-net.yaml
-  - vrouter.yaml
   - xos-gui-extensions.yml
-
-# XOS new version's TOSCA config
-xos_new_tosca_config_templates:
   - mcord-oai-services.yml
-  - mcord-oai-service-graph.yml
+  - mcord-oai-address-manager.yml
   - service-graph-constraints.yaml
-
-xos_other_templates:
-  - fabric-network-cfg.json
 
 # GUI Config [new GUI]
 gui_project_name: "M-CORD"
@@ -63,27 +57,67 @@ xos_services:
   - name: onos
     path: orchestration/xos_services/onos-service
     keypair: onos_rsa
-  - name: fabric
-    path: orchestration/xos_services/fabric
-  - name: vrouter
-    path: orchestration/xos_services/vrouter
   - name: addressmanager
     path: orchestration/xos_services/addressmanager
-  - name: vbbu
-    path: orchestration/xos_services/vbbu
-    keypair: mcord_rsa
+  - name: fabric
+    path: orchestration/xos_services/fabric
   - name: vmme
     path: orchestration/xos_services/vmme
+    keypair: mcord_rsa
+  - name: vspgwc
+    path: orchestration/xos_services/vspgwc
+    keypair: mcord_rsa
+  - name: vspgwu
+    path: orchestration/xos_services/vspgwu
     keypair: mcord_rsa
   - name: vhss
     path: orchestration/xos_services/vhss
     keypair: mcord_rsa
-  - name: vspgwc
-    path: orchestration/xos_services/vspgwc
-    keypair: mcord_rsa    
-  - name: vspgwu
-    path: orchestration/xos_services/vspgwu
+  - name: vrouter
+    path: orchestration/xos_services/vrouter
+  - name: vepc
+    path: orchestration/xos_services/epc-service
     keypair: mcord_rsa
+
+# service graph gui constraints
+xos_gui_service_graph_constraints: '[
+  ["vepc", null, "mcord", null, null],
+  [null, null, null, null, null],
+  [null, "vhss", "vmme", null, null],
+  [null, "vspgwc", null, "vspgwu", null],
+  [null, null, null, null, null]
+]'
+
+# For creating the EPC networks in mcord-oai-services.yml (copied from EPC blueprint)
+# Only vMME, vSPGWU needs accept eNodeB traffic from outside, use flat_template
+# vHSS, vSPGWC is private network, use private_template
+
+mcord_networks:
+  - name: vmme_network
+    subnet: 10.0.6.0/24
+    permit_all_slices: True
+    owner: vmme
+    template: flat_template
+  - name: vhss_network
+    subnet: 10.0.7.0/24
+    permit_all_slices: True
+    owner: vhss
+    template: private_template
+  - name: vspgwc_network
+    subnet: 10.0.8.0/24
+    permit_all_slices: True
+    owner: vspgwc
+    template: private_template
+  - name: vspgwu_network
+    subnet: 10.0.9.0/24
+    permit_all_slices: True
+    owner: vspgwu
+    template: flat_template
+  - name: public_network
+    subnet: 10.8.1.0/24
+    permit_all_slices: True
+    owner: vspgwu
+    template: public_template
 
 profile_library: "mcord"
 
@@ -103,7 +137,7 @@ charm_versions:
   nagios: "cs:trusty/nagios-10"
   neutron-api: "cs:~cordteam/trusty/neutron-api-6"
   nova-cloud-controller: "cs:trusty/nova-cloud-controller-64"
-  nova-compute: "cs:~cordteam/trusty/nova-compute-3"
+  nova-compute: "cs:~cordteam/trusty/nova-compute-4"
   nrpe: "cs:trusty/nrpe-4"
   ntp: "cs:trusty/ntp-14"
   openstack-dashboard: "cs:trusty/openstack-dashboard-19"
@@ -258,12 +292,8 @@ compute_relations:
   - name: ntp
     relations: [ "nova-compute", ]
 
-
+image_dir: /opt/cord_profile/images # Should change the build to symlink instead of copy images?
 xos_images:
-  - name: "trusty-server-multi-nic"
-    url: "https://github.com/opencord/platform-install/releases/download/vms/trusty-server-cloudimg-amd64-disk1.img.20170201"
-    checksum: "sha256:ebf007ba3ec1043b7cd011fc6668e2a1d1d4c69c41071e8513ab355df7a057cb"
-
   - name: "image-oai"
-    url: "https://github.com/aweimeow/oai_scenario/releases/download/ciab-4.1/oai_cp_sep_compress.qcow2"
+    url: "https://github.com/aweimeow/oai_scenario/releases/download/ciab-5.0/oai_spgw_seperated.qcow2"
     checksum: "sha256:3f2044c59063b6ee72d898204e4cfa9beb08a5854f6a4bae589b01a11508cbcf"

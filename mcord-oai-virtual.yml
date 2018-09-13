@@ -20,6 +20,8 @@
 cord_scenario: cord
 cord_profile: mcord-oai
 
+compute_vm_mem: 65536
+
 vagrant_up_prereqs:
   - prereqs-check
   - ciab-ovs

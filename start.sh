@@ -1,42 +1,34 @@
 #!/bin/bash
 
-CORD_VER=cord-4.1
-DST=~/cord/build
-TMP=/tmp/oai_scenario_backup/
-mkdir /tmp/oai_scenario_backup
 
-# Remove backup folder
-rm -rf $TMP
-
-# Backup all old files
-cp $DST/docker_images.yml $TMP
-cp $DST/../.repo/manifests/default.xml $TMP
-cp $DST/platform-install/roles/cord-profile/templates/public-net.yaml.j2 $TMP
+CORD_VER='cord-5.0'
+BRANCH='master' #$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+DST=~/cord
 
 # Copy new files into our target
-cp docker_images.yml $DST/
-cp manifest.xml $DST/../.repo/manifests/default.xml
-cp mcord-oai.yml $DST/platform-install/profile_manifests/
-cp mcord-oai-virtual.yml $DST/podconfig/
-cp public-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
-cp oai-net.yaml.j2 $DST/platform-install/roles/cord-profile/templates/
-cp mcord-oai-services.yml.j2 $DST/platform-install/roles/cord-profile/templates
-cp mcord-oai-service-graph.yml.j2 $DST/platform-install/roles/cord-profile/templates
+cp docker_images.yml $DST/build
+cp mcord-oai.yml $DST/orchestration/profiles/mcord/
 
-# Use custom version of vhss, vmme instead official
+# Copy podconfig
+cp mcord-oai-virtual.yml $DST/orchestration/profiles/mcord/podconfig/
+cp mcord-oai-physical.yml $DST/orchestration/profiles/mcord/podconfig/
+
+# Copy Template files
+cp mcord-oai-services.yml.j2 $DST/orchestration/profiles/mcord/templates/
+cp mcord-oai-address-manager.yml.j2 $DST/orchestration/profiles/mcord/templates/
+cp vtn-service.yaml.j2 $DST/orchestration/profiles/mcord/templates/
+cp mcord-oai-test-playbook.yml $DST/orchestration/profiles/mcord/test/
+
+# Use custom version of services instead official
 cd ~/cord/orchestration/xos_services
-rm -rf vbbu vhss vmme vspgwc vspgwu
-git clone https://github.com/aweimeow/vBBU vbbu
-git clone https://github.com/aweimeow/vMME vmme
-git clone https://github.com/aweimeow/vHSS vhss
-git clone https://github.com/aweimeow/vspgwc vspgwc
-git clone https://github.com/aweimeow/vspgwu vspgwu
 
-# Checkout to target branch
-for var in "vbbu" "vhss" "vmme" "vspgwc" "vspgwu"; do
+for var in "vbbu" "vhss" "vmme" "vspgwc" "vspgwu" "epc-service"; do
+    rm -rf $var;
+    git clone https://github.com/aweimeow/$var.git $var;
     cd $var;
     git remote add opencord https://github.com/aweimeow/$var.git;
-    git checkout ciab-4.1;
+    git remote add dev git@github.com:aweimeow/$var.git;
+    git checkout $BRANCH;
     git checkout -b $CORD_VER;
     mkdir .git/refs/remotes/opencord/;
     echo $(git log --format="%H" -n 1) > .git/refs/remotes/opencord/$CORD_VER;
