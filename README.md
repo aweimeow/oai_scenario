@@ -3,6 +3,8 @@
 This branch corresponded to `cord-5.0` in official branch, 
 `cord-5.0` support is work in progress, will support in the furture.
 
+This project maintained by [National Chiao Tung University](https://www.nctu.edu.tw/).
+
 ## Branchs
 
 We have 2 major branchs, master(ciab) and cordpod.
